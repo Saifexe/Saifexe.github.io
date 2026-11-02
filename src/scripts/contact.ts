@@ -133,6 +133,8 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
 
     send.disabled = true;
     setStep('send', 'run');
+    // Strip control characters (keeps tab and newline) before the text goes into an email or a POST body.
+    // eslint-disable-next-line no-control-regex
     const clean = (k: string, max: number) => String(fd.get(k) || '').replace(/[\u0000-\u0008\u000B-\u001F\u007F]/g, '').trim().slice(0, max);
     try {
       await wait(500);

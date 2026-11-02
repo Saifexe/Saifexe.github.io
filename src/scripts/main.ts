@@ -72,7 +72,12 @@ function travelTo(el: Element | null, instant = false) {
   const navH = $('nav.top')?.offsetHeight ?? 0;
   const target = el.id === 'top' ? 0 : Math.max(0, el.getBoundingClientRect().top + scrollY - navH);
   const dist = Math.abs(target - scrollY);
-  if (!lenis || instant || dist < 4) { lenis ? lenis.scrollTo(target, { immediate: true, force: true }) : scrollTo(0, target); arrive(el); return; }
+  if (!lenis || instant || dist < 4) {
+    if (lenis) lenis.scrollTo(target, { immediate: true, force: true });
+    else scrollTo(0, target);
+    arrive(el);
+    return;
+  }
   document.body.classList.add('traveling');
   lenis.scrollTo(target, {
     duration: Math.min(1.6, Math.max(0.9, dist / 2600)),
@@ -313,8 +318,9 @@ if (canvas && !reduce) {
   if (ok) {
     const boot = () => import('./hero-scene').then((m) => m.startHeroScene(canvas, $('#hero-photo')));
     const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
-    if (document.readyState === 'complete') (idle ? idle(boot, { timeout: 1200 }) : setTimeout(boot, 200));
-    else addEventListener('load', () => (idle ? idle(boot, { timeout: 1200 }) : setTimeout(boot, 200)), { once: true });
+    const schedule = () => { if (idle) idle(boot, { timeout: 1200 }); else setTimeout(boot, 200); };
+    if (document.readyState === 'complete') schedule();
+    else addEventListener('load', schedule, { once: true });
   }
 }
 

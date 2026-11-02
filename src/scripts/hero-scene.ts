@@ -244,7 +244,7 @@ export function startHeroScene(canvas: HTMLCanvasElement, anchor: HTMLElement | 
 
   const play = () => { if (running || !inView || document.hidden) return; running = true; last = performance.now(); renderer.setAnimationLoop(frame); };
   const stop = () => { running = false; renderer.setAnimationLoop(null); };
-  new IntersectionObserver(([e]) => { inView = e.isIntersecting; inView ? play() : stop(); }, { threshold: 0 }).observe(hero);
+  new IntersectionObserver(([e]) => { inView = e.isIntersecting; if (inView) play(); else stop(); }, { threshold: 0 }).observe(hero);
   document.addEventListener('visibilitychange', () => (document.hidden ? stop() : play()));
   new ResizeObserver(() => layout()).observe(canvas);
   canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); stop(); canvas.classList.remove('on'); });
