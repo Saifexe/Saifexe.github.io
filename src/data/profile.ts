@@ -59,10 +59,9 @@ export const toolbox = [
       'Flyway',
     ],
   },
-  { group: 'Firewalls & network security', items: ['FortiGate', 'pfSense'] },
   {
     group: 'Systems & networking',
-    items: ['Linux', 'Bash', 'Git', 'TCP/IP', 'Routing & switching', 'MQTT', 'Agile / Scrum'],
+    items: ['Linux', 'Bash', 'Git', 'TCP/IP', 'Routing & switching', 'FortiGate', 'pfSense', 'MQTT', 'Agile / Scrum'],
   },
 ];
 
