@@ -148,14 +148,19 @@ function heroIntro() {
 }
 
 function reveals() {
-  // Split headings: lines rise out of a mask.
-  $$('[data-split]').forEach((el) => {
+  // Split headings: lines rise out of a mask. Splitting measures layout, so headings further down
+  // are split shortly before they scroll in, not all at load. The animation itself is unchanged.
+  const split = (el: HTMLElement) => {
     SplitText.create(el, {
       type: 'lines,words', mask: 'lines', linesClass: 'split-line', autoSplit: true,
       onSplit: (self) =>
         gsap.from(self.lines, { yPercent: 105, duration: 1.1, stagger: 0.08, ease: EASE, scrollTrigger: { trigger: el, start: 'top 88%', once: true } }),
     });
     el.style.opacity = '1';
+  };
+  $$('[data-split]').forEach((el) => {
+    if (el.getBoundingClientRect().top < innerHeight * 1.5) split(el);
+    else ScrollTrigger.create({ trigger: el, start: 'top bottom+=400', once: true, onEnter: () => split(el) });
   });
   // Rule beside each section label.
   $$('[data-rule]').forEach((el) =>
