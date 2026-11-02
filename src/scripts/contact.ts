@@ -155,7 +155,8 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
       const res = await fetch(endpoint, {
         method: 'POST',
         credentials: 'omit',
-        referrerPolicy: 'no-referrer',
+        // FormSubmit rejects requests with no Referer; send the origin only, never the path.
+        referrerPolicy: 'strict-origin',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           ...data,
