@@ -68,8 +68,9 @@ function arrive(el: Element) {
 }
 function travelTo(el: Element | null, instant = false) {
   if (!el) return;
-  const navH = 62;
-  const target = el.id === 'top' ? 0 : Math.max(0, el.getBoundingClientRect().top + scrollY - navH + 1);
+  // Land exactly below the sticky bar, whatever its height.
+  const navH = $('nav.top')?.offsetHeight ?? 0;
+  const target = el.id === 'top' ? 0 : Math.max(0, el.getBoundingClientRect().top + scrollY - navH);
   const dist = Math.abs(target - scrollY);
   if (!lenis || instant || dist < 4) { lenis ? lenis.scrollTo(target, { immediate: true, force: true }) : scrollTo(0, target); arrive(el); return; }
   document.body.classList.add('traveling');
