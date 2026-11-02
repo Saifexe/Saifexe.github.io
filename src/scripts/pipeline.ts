@@ -1,8 +1,9 @@
 /**
  * Live pipeline simulation for the Ktebna card. Same behaviour and timings as v1:
  * the dot stops on each stage, becomes a spinner, turns green (passed) or red (blocked),
- * then moves on. Pods wait, roll out, or show "Blocked". The 2nd run of every 3 is blocked
- * at the security stage. Runs only while visible and the tab is active.
+ * then moves on. Pods wait, roll out, or show "Blocked". The 2nd run of every 3 is blocked,
+ * and each blocked run fails a different gate (see FAILS), so every gate gets its turn.
+ * Runs only while visible and the tab is active.
  */
 import { gsap } from 'gsap';
 
@@ -16,6 +17,13 @@ const MSGS = [
   'build · images saved as artifacts',
   'image scan · clean',
   'publish · pushed :SHA',
+];
+// One entry per blocked run, in turn: which stage fails and why.
+const FAILS = [
+  { stage: 1, msg: 'sonarcloud · quality gate failed · new code issue' },
+  { stage: 2, msg: 'gitleaks · 1 secret found in the commit' },
+  { stage: 2, msg: 'trivy · 1 CRITICAL CVE in a dependency' },
+  { stage: 4, msg: 'image scan · 1 CRITICAL CVE in the base image' },
 ];
 
 export function startPipeline(root: HTMLElement, reduce: boolean) {
@@ -76,11 +84,12 @@ export function startPipeline(root: HTMLElement, reduce: boolean) {
   };
   const setPods = (cls: string, txt: string) => pods.forEach((p) => setPod(p, cls, txt));
 
-  let run = 0;
+  let run = 0,
+    nBlocked = 0;
   async function cycle() {
     run++;
     const sha = hex(),
-      blocked = run % 3 === 2;
+      gate = run % 3 === 2 ? FAILS[nBlocked++ % FAILS.length] : null;
     shaEl.textContent = sha;
     sts.forEach((n) => n.setAttribute('class', 'st'));
     setPods('idle', 'Waiting');
@@ -99,14 +108,14 @@ export function startPipeline(root: HTMLElement, reduce: boolean) {
       spin.setAttribute('opacity', '1');
       await sleep(900);
       spin.setAttribute('opacity', '0');
-      const fail = blocked && i === 2;
+      const fail = gate?.stage === i;
       packet.setAttribute('class', 'packet ' + (fail ? 'bad' : 'ok'));
       sts[i].setAttribute('class', 'st ' + (fail ? 'bad' : 'ok'));
       await radius(8, 220);
       if (fail) {
         trail.setAttribute('class', 'trail bad');
         setStatus('blocked');
-        log('bad', '✗', 'trivy · 1 CRITICAL CVE in a dependency');
+        log('bad', '✗', gate!.msg);
         await sleep(1000);
         for (const p of pods) {
           setPod(p, 'blk', 'Blocked');
