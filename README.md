@@ -1,6 +1,6 @@
 # saifexe.github.io
 
-Portfolio of **Saif Eddine Dahech**, Cloud & DevOps Engineer. *From commit to cluster.*
+Portfolio of **Saif Eddine Dahech**, Cloud & DevOps Engineer. _From commit to cluster._
 
 Built with **Astro 7** (static), **GSAP** (ScrollTrigger + SplitText), **Lenis** smooth scrolling and a **Three.js** hero scene.
 Deployed to GitHub Pages by a security-gated GitHub Actions pipeline.
@@ -35,15 +35,15 @@ src/
 
 ## Common changes
 
-| Change | Where |
-|---|---|
-| Add a project | New file in `src/content/projects/`. Frontmatter only → a card. Add `caseStudy:` + an MDX body → also a page at `/work/<file-name>/`. The schema in `src/content.config.ts` fails the build if a field is wrong. |
-| Add a logo | Put the official SVG in `public/tech/` and add one line in `src/data/tech.ts`. Every tag with that name gets it. |
-| Update CV links | `src/data/site.ts` → `cv` |
-| Colours, fonts | `:root` in `src/styles/global.css` |
-| Pipeline timing | `src/scripts/pipeline.ts` |
-| Hero scene density / speed | constants at the top of `startHeroScene` in `src/scripts/hero-scene.ts` |
-| New case study page transition | add `.vt-<slug> { view-transition-name: cs-<slug>; }` in `global.css` |
+| Change                         | Where                                                                                                                                                                                                            |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Add a project                  | New file in `src/content/projects/`. Frontmatter only → a card. Add `caseStudy:` + an MDX body → also a page at `/work/<file-name>/`. The schema in `src/content.config.ts` fails the build if a field is wrong. |
+| Add a logo                     | Put the official SVG in `public/tech/` and add one line in `src/data/tech.ts`. Every tag with that name gets it.                                                                                                 |
+| Update CV links                | `src/data/site.ts` → `cv`                                                                                                                                                                                        |
+| Colours, fonts                 | `:root` in `src/styles/global.css`                                                                                                                                                                               |
+| Pipeline timing                | `src/scripts/pipeline.ts`                                                                                                                                                                                        |
+| Hero scene density / speed     | constants at the top of `startHeroScene` in `src/scripts/hero-scene.ts`                                                                                                                                          |
+| New case study page transition | add `.vt-<slug> { view-transition-name: cs-<slug>; }` in `global.css`                                                                                                                                            |
 
 ## Deploy
 
@@ -70,6 +70,6 @@ If you ever move to Cloudflare Pages or Netlify, add a `public/_headers` file to
 ## Performance notes
 
 - Images are converted to WebP at build time with responsive sizes (screenshots shrank 40–90%).
-- Three.js (≈135 kB gzipped) loads only after the page is idle, only with WebGL2, never with *Save-Data* or *reduced motion*, and its render loop stops when the hero is off screen or the tab is hidden.
+- Three.js (≈135 kB gzipped) loads only after the page is idle, only with WebGL2, never with _Save-Data_ or _reduced motion_, and its render loop stops when the hero is off screen or the tab is hidden.
 - The pipeline script loads when its card approaches the viewport.
-- Every animation is disabled for visitors with *prefers-reduced-motion*; content never depends on JavaScript to be visible (a CSS fallback reveals it after 2.5 s).
+- Every animation is disabled for visitors with _prefers-reduced-motion_; content never depends on JavaScript to be visible (a CSS fallback reveals it after 2.5 s).

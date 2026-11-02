@@ -2,26 +2,59 @@
 import SectionTitle from './SectionTitle.astro';
 import { degrees, certifications, languages } from '../data/profile';
 ---
+
 <section id="education">
   <div class="wrap">
     <SectionTitle label="still learning, always will be" title="Always *learning*" />
     <div class="edu-grid">
       <div data-reveal>
         <div class="col-h">Degrees &amp; training</div>
-        <div class="degrees">{degrees.map((d) => <div class="degree"><b>{d.title}</b><span>{d.meta}</span></div>)}</div>
+        <div class="degrees">
+          {degrees.map((d) => (
+            <div class="degree">
+              <b>{d.title}</b>
+              <span>{d.meta}</span>
+            </div>
+          ))}
+        </div>
       </div>
       <div data-reveal>
         <div class="col-h">Certifications</div>
-        <div class="certs" data-stagger>{certifications.map((c) => <div class="cert">{c.name}<small>{c.issuer}</small></div>)}</div>
+        <div class="certs" data-stagger>
+          {certifications.map((c) => (
+            <div class="cert">
+              {c.name}
+              <small>{c.issuer}</small>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
     <div class="langs" id="langs" aria-label="Languages">
       {languages.map((l) => (
         <div class="lang">
           <div class="nm">{l.name}</div>
-          <div class="lv" data-level={l.level}>{l.level}</div>
-          <div class="meter" role="meter" aria-label={`${l.name}: ${l.level}`} aria-valuemin="0" aria-valuemax="4" aria-valuenow={l.of4}>
-            {[1, 2, 3, 4].map((i) => <i class={i <= l.of4 ? 'on' : undefined}>{i <= l.of4 && <><b></b><u></u></>}</i>)}
+          <div class="lv" data-level={l.level}>
+            {l.level}
+          </div>
+          <div
+            class="meter"
+            role="meter"
+            aria-label={`${l.name}: ${l.level}`}
+            aria-valuemin="0"
+            aria-valuemax="4"
+            aria-valuenow={l.of4}
+          >
+            {[1, 2, 3, 4].map((i) => (
+              <i class={i <= l.of4 ? 'on' : undefined}>
+                {i <= l.of4 && (
+                  <>
+                    <b></b>
+                    <u></u>
+                  </>
+                )}
+              </i>
+            ))}
           </div>
         </div>
       ))}

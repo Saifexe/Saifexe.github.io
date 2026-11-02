@@ -1,15 +1,34 @@
 ---
 /* Cells may be prefixed y: (good), n: (bad) or p: (partial) to colour them. */
-interface Props { head: string[]; rows: string[][] }
+interface Props {
+  head: string[];
+  rows: string[][];
+}
 const { head, rows } = Astro.props;
 const cell = (c: string) => {
   const m = /^([ynp]):(.*)$/.exec(c);
   return m ? { cls: m[1], text: m[2] } : { cls: undefined, text: c };
 };
 ---
+
 <div class="cmp-wrap" data-reveal>
   <table class="cmp">
-    <thead><tr>{head.map((h) => <th scope="col">{h}</th>)}</tr></thead>
-    <tbody>{rows.map((r) => <tr>{r.map((c, i) => { const x = cell(c); return i === 0 ? <th scope="row">{x.text}</th> : <td class={x.cls}>{x.text}</td>; })}</tr>)}</tbody>
+    <thead>
+      <tr>
+        {head.map((h) => (
+          <th scope="col">{h}</th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((r) => (
+        <tr>
+          {r.map((c, i) => {
+            const x = cell(c);
+            return i === 0 ? <th scope="row">{x.text}</th> : <td class={x.cls}>{x.text}</td>;
+          })}
+        </tr>
+      ))}
+    </tbody>
   </table>
 </div>

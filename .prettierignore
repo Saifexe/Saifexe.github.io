@@ -3,3 +3,6 @@ dist/
 node_modules/
 package-lock.json
 public/
+
+# MDX whitespace is meaningful (line breaks inside components create <p> wrappers); keep it hand-formatted.
+*.mdx

@@ -1,9 +1,16 @@
 ---
 import { hl } from '../lib/hl';
-interface Props { label: string; title: string; as?: 'h2' | 'h3' }
+interface Props {
+  label: string;
+  title: string;
+  as?: 'h2' | 'h3';
+}
 const { label, title, as: Tag = 'h2' } = Astro.props;
 ---
+
 <div class="sec-title">
-  <span class="mono-label" data-rule>{label}</span>
+  <span class="mono-label" data-rule>
+    {label}
+  </span>
   <Tag data-split set:html={hl(title)} />
 </div>

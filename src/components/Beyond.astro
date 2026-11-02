@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import SectionTitle from './SectionTitle.astro';
 import { beyond } from '../data/site';
 ---
+
 {beyond.length > 0 && (
   <section id="beyond">
     <div class="wrap">
@@ -10,8 +11,13 @@ import { beyond } from '../data/site';
       <div class="beyond-grid" data-stagger>
         {beyond.map((b) => (
           <div class="beyond-item">
-            {b.image && <Image src={b.image} alt={b.alt ?? ''} widths={[420, 760]} sizes="(max-width: 900px) 92vw, 360px" />}
-            <div class="txt"><h3>{b.title}</h3><p>{b.text}</p></div>
+            {b.image && (
+              <Image src={b.image} alt={b.alt ?? ''} widths={[420, 760]} sizes="(max-width: 900px) 92vw, 360px" />
+            )}
+            <div class="txt">
+              <h3>{b.title}</h3>
+              <p>{b.text}</p>
+            </div>
           </div>
         ))}
       </div>

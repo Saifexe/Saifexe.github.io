@@ -1,13 +1,23 @@
 ---
 import Base from '../layouts/Base.astro';
 ---
+
 <Base title="Not found">
   <main id="main" class="cs-hero">
     <div class="wrap">
       <span class="mono-label">404 · pipeline blocked</span>
-      <h1>This page didn't pass the <em class="hl">gate.</em></h1>
+      <h1>
+        This page didn't pass the <em class="hl">gate.</em>
+      </h1>
       <p class="sum">The address may be old or mistyped. Nothing was deployed here.</p>
-      <p class="sum"><a class="btn solid" href="/">Back to the home page <span class="arr" aria-hidden="true">→</span></a></p>
+      <p class="sum">
+        <a class="btn solid" href="/">
+          Back to the home page{' '}
+          <span class="arr" aria-hidden="true">
+            →
+          </span>
+        </a>
+      </p>
     </div>
   </main>
 </Base>

@@ -1,8 +1,17 @@
 ---
-interface Props { symptom: string; label?: string; kind?: string }
+interface Props {
+  symptom: string;
+  label?: string;
+  kind?: string;
+}
 const { symptom, label = 'Fix', kind = 'Symptom' } = Astro.props;
 ---
+
 <div class="bug" data-reveal>
-  <span class="lbl sym">{kind}</span><p>{symptom}</p>
-  <span class="lbl fix">{label}</span><p><slot /></p>
+  <span class="lbl sym">{kind}</span>
+  <p>{symptom}</p>
+  <span class="lbl fix">{label}</span>
+  <p>
+    <slot />
+  </p>
 </div>

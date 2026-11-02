@@ -33,11 +33,22 @@ const projects = defineCollection({
       highlights: z
         .object({
           numbers: z
-            .array(z.object({ n: z.number(), dec: z.number().default(0), suf: z.string().default(''), label: z.string() }))
+            .array(
+              z.object({ n: z.number(), dec: z.number().default(0), suf: z.string().default(''), label: z.string() }),
+            )
             .max(4),
           built: z.array(z.string()),
           runs: z.array(z.string()),
-          gallery: z.array(z.object({ src: image(), alt: z.string(), name: z.string(), short: z.string(), cap: z.string(), dark: z.boolean().default(true) })),
+          gallery: z.array(
+            z.object({
+              src: image(),
+              alt: z.string(),
+              name: z.string(),
+              short: z.string(),
+              cap: z.string(),
+              dark: z.boolean().default(true),
+            }),
+          ),
         })
         .optional(),
     }),

@@ -3,11 +3,17 @@ import SectionTitle from './SectionTitle.astro';
 import TagList from './TagList.astro';
 import { toolbox } from '../data/profile';
 ---
+
 <section id="toolbox">
   <div class="wrap">
     <SectionTitle label="my everyday kit" title="What I *work with*" />
     <div class="tools" data-stagger>
-      {toolbox.map((t) => <div class="tool"><h3>{t.group}</h3><TagList items={t.items} /></div>)}
+      {toolbox.map((t) => (
+        <div class="tool">
+          <h3>{t.group}</h3>
+          <TagList items={t.items} />
+        </div>
+      ))}
     </div>
   </div>
 </section>

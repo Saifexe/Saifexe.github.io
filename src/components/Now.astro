@@ -2,14 +2,21 @@
 import SectionTitle from './SectionTitle.astro';
 import { now } from '../data/site';
 ---
+
 <section id="now">
   <div class="wrap">
     <SectionTitle label="right now" title="What I'm *up to*" />
     <div class="now-grid" data-stagger>
       {now.items.map((n) => (
-        <div class="now-item"><span class="k">{n.k}</span><h3>{n.title}</h3><p>{n.text}</p></div>
+        <div class="now-item">
+          <span class="k">{n.k}</span>
+          <h3>{n.title}</h3>
+          <p>{n.text}</p>
+        </div>
       ))}
     </div>
-    <p class="now-stamp" data-reveal>Last updated {now.updated}.</p>
+    <p class="now-stamp" data-reveal>
+      Last updated {now.updated}.
+    </p>
   </div>
 </section>

@@ -31,18 +31,30 @@ export const experience = [
 ];
 
 export const toolbox = [
-  { group: 'CI/CD & automation', items: ['GitLab CI/CD', 'GitHub Actions', 'Container Registry', 'Quality gates', 'Release automation'] },
+  {
+    group: 'CI/CD & automation',
+    items: ['GitLab CI/CD', 'GitHub Actions', 'Container Registry', 'Quality gates', 'Release automation'],
+  },
   { group: 'DevSecOps', items: ['SonarCloud / SonarQube', 'Trivy', 'Gitleaks', 'Vulnerability management'] },
   { group: 'Containers & orchestration', items: ['Docker', 'Docker Compose', 'Kubernetes', 'nginx'] },
   { group: 'Cloud & IaC', items: ['AWS', 'Terraform', 'Azure', 'Serverless', 'S3-compatible storage'] },
   { group: 'Observability', items: ['Prometheus', 'Grafana', 'Alertmanager', 'Micrometer', 'CloudWatch'] },
   { group: 'Testing & quality', items: ['JUnit 5', 'Testcontainers', 'JaCoCo', 'Vitest', 'ESLint'] },
-  { group: 'Development & data', items: ['Java', 'Spring Boot', 'Python', 'React', 'C / C++', 'MySQL', 'Oracle', 'Flyway'] },
-  { group: 'Systems & networking', items: ['Linux', 'Bash', 'Git', 'TCP/IP', 'Routing & switching', 'MQTT', 'Agile / Scrum'] },
+  {
+    group: 'Development & data',
+    items: ['Java', 'Spring Boot', 'Python', 'React', 'C / C++', 'MySQL', 'Oracle', 'Flyway'],
+  },
+  {
+    group: 'Systems & networking',
+    items: ['Linux', 'Bash', 'Git', 'TCP/IP', 'Routing & switching', 'MQTT', 'Agile / Scrum'],
+  },
 ];
 
 export const degrees = [
-  { title: 'Engineering Degree in Computer Engineering, Cloud Computing & DevOps', meta: 'EPI Digital School, Tunisia · Sep 2024 – Jun 2027 (expected)' },
+  {
+    title: 'Engineering Degree in Computer Engineering, Cloud Computing & DevOps',
+    meta: 'EPI Digital School, Tunisia · Sep 2024 – Jun 2027 (expected)',
+  },
   { title: 'Project-Based Software Engineering Training', meta: '42 Heilbronn, Germany · Mar 2024 – May 2024' },
   { title: "Bachelor's Degree in Network & IT Services", meta: 'ISET Mahdia, Tunisia · Sep 2020 – Jun 2023' },
 ];

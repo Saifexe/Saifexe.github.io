@@ -1,7 +1,18 @@
 ---
-interface Props { items: { n: string; l: string; unit?: string }[] }
+interface Props {
+  items: { n: string; l: string; unit?: string }[];
+}
 const { items } = Astro.props;
 ---
+
 <div class="results" data-stagger>
-  {items.map((r) => <div><div class="n">{r.n}{r.unit && <small> {r.unit}</small>}</div><div class="l">{r.l}</div></div>)}
+  {items.map((r) => (
+    <div>
+      <div class="n">
+        {r.n}
+        {r.unit && <small> {r.unit}</small>}
+      </div>
+      <div class="l">{r.l}</div>
+    </div>
+  ))}
 </div>

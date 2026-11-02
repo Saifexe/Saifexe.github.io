@@ -14,27 +14,51 @@ const cs = project.data.caseStudy!;
 const { Content } = await render(project);
 const ogImage = project.data.highlights?.gallery[0]?.src;
 ---
+
 <Base title={plain(cs.title)} description={cs.summary} ogImage={ogImage} type="article">
   <div class="cs-bar">
     <div class="wrap">
-      <a class="crumb" href="/#work">work / <b>{project.id}</b></a>
-      <a class="btn small" href="/#work">← Back</a>
+      <a class="crumb" href="/#work">
+        work / <b>{project.id}</b>
+      </a>
+      <a class="btn small" href="/#work">
+        ← Back
+      </a>
     </div>
   </div>
   <main id="main">
     <header class="cs-hero">
       <div class="wrap">
-        <div class="kicker" data-hero><span>Case study</span>{project.data.kicker.map((k) => <span>{k}</span>)}</div>
+        <div class="kicker" data-hero>
+          <span>Case study</span>
+          {project.data.kicker.map((k) => (
+            <span>{k}</span>
+          ))}
+        </div>
         <h1 class={`vt-${project.id}`} data-split set:html={hl(cs.title)} />
-        <p class="sum" data-hero>{cs.summary}</p>
+        <p class="sum" data-hero>
+          {cs.summary}
+        </p>
         <div class="meta" data-stagger>
-          {cs.meta.map((m) => <div><div class="k">{m.k}</div><div class="v">{m.v}</div></div>)}
+          {cs.meta.map((m) => (
+            <div>
+              <div class="k">{m.k}</div>
+              <div class="v">{m.v}</div>
+            </div>
+          ))}
         </div>
       </div>
     </header>
     <Content />
     {cs.next && (
-      <div class="cs-next"><div class="wrap"><a class="big" href={`/work/${cs.next}/`}><span class="k">Next case study →</span><h3>{cs.nextLabel}</h3></a></div></div>
+      <div class="cs-next">
+        <div class="wrap">
+          <a class="big" href={`/work/${cs.next}/`}>
+            <span class="k">Next case study →</span>
+            <h3>{cs.nextLabel}</h3>
+          </a>
+        </div>
+      </div>
     )}
   </main>
   <Footer />

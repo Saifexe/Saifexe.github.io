@@ -1,10 +1,20 @@
 ---
-interface Props { num: string; title: string; wide?: boolean }
+interface Props {
+  num: string;
+  title: string;
+  wide?: boolean;
+}
 const { num, title, wide = false } = Astro.props;
 ---
+
 <div class="cs-sec">
   <div class:list={['wrap', 'cs-grid', { wide }]}>
-    <div><span class="num">{num}</span><h2 data-split>{title}</h2></div>
-    <div class="cs-text" data-reveal><slot /></div>
+    <div>
+      <span class="num">{num}</span>
+      <h2 data-split>{title}</h2>
+    </div>
+    <div class="cs-text" data-reveal>
+      <slot />
+    </div>
   </div>
 </div>

@@ -19,8 +19,14 @@ export const site = {
     gitlab: { href: 'https://gitlab.com/saifed10', label: 'gitlab.com/saifed10' },
   },
   cv: [
-    { label: 'Download in English', href: 'https://drive.google.com/uc?export=download&id=1h4Q-fi6wEo4P2hMDEqVLzS31Lyt9Q9PP' },
-    { label: 'Download in French', href: 'https://drive.google.com/uc?export=download&id=1rejqP6sRRkkdJxOrHYkZbePlnWKH9w6g' },
+    {
+      label: 'Download in English',
+      href: 'https://drive.google.com/uc?export=download&id=1h4Q-fi6wEo4P2hMDEqVLzS31Lyt9Q9PP',
+    },
+    {
+      label: 'Download in French',
+      href: 'https://drive.google.com/uc?export=download&id=1rejqP6sRRkkdJxOrHYkZbePlnWKH9w6g',
+    },
   ],
   nav: [
     { href: '/#about', id: 'about', label: 'About' },
@@ -48,10 +54,22 @@ export const about = {
     'Next, I want to bring these practices to AI and LLM systems, where delivery, security and observability matter just as much.',
   ],
   principles: [
-    { title: 'Security is a gate', text: 'Scanners only help if they can stop a release. I wire them in as blocking checks with clear thresholds.' },
-    { title: 'Every release is traceable', text: 'The image that was scanned is the image that ships, tagged by commit, with a rollback runbook ready.' },
-    { title: 'Find the real cause', text: "I debug from evidence: logs, variables, network paths. A fix I can't explain is a fix I don't trust." },
-    { title: 'Document it', text: "READMEs, security policies and runbooks, so the next engineer doesn't need me in the room." },
+    {
+      title: 'Security is a gate',
+      text: 'Scanners only help if they can stop a release. I wire them in as blocking checks with clear thresholds.',
+    },
+    {
+      title: 'Every release is traceable',
+      text: 'The image that was scanned is the image that ships, tagged by commit, with a rollback runbook ready.',
+    },
+    {
+      title: 'Find the real cause',
+      text: "I debug from evidence: logs, variables, network paths. A fix I can't explain is a fix I don't trust.",
+    },
+    {
+      title: 'Document it',
+      text: "READMEs, security policies and runbooks, so the next engineer doesn't need me in the room.",
+    },
   ],
 };
 
@@ -61,10 +79,26 @@ export const about = {
 export const now = {
   updated: 'November 2026',
   items: [
-    { k: 'learning', title: 'Kubernetes, hands-on', text: 'Working through KIND labs: multi-node clusters, networking, and the errors that teach you the most.' },
-    { k: 'studying', title: 'Terraform, properly', text: 'Going beyond "it applies": modules, state and writing infrastructure other people can read.' },
-    { k: 'practising', title: 'Firewall administration', text: 'FortiGate labs on VMware: policies, NAT and making sure only the right traffic gets through.' },
-    { k: 'looking for', title: 'My PFE internship', text: 'A paid Cloud / DevOps / DevSecOps internship of 5+ months, starting January or February 2027.' },
+    {
+      k: 'learning',
+      title: 'Kubernetes, hands-on',
+      text: 'Working through KIND labs: multi-node clusters, networking, and the errors that teach you the most.',
+    },
+    {
+      k: 'studying',
+      title: 'Terraform, properly',
+      text: 'Going beyond "it applies": modules, state and writing infrastructure other people can read.',
+    },
+    {
+      k: 'practising',
+      title: 'Firewall administration',
+      text: 'FortiGate labs on VMware: policies, NAT and making sure only the right traffic gets through.',
+    },
+    {
+      k: 'looking for',
+      title: 'My PFE internship',
+      text: 'A paid Cloud / DevOps / DevSecOps internship of 5+ months, starting January or February 2027.',
+    },
   ],
 };
 
