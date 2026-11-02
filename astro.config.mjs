@@ -16,7 +16,8 @@ export default defineConfig({
   integrations: [mdx(), sitemap()],
   // No code blocks in the content, and Shiki's inline styles would break the CSP.
   markdown: { syntaxHighlight: false },
-  build: { format: 'directory' },
+  // The stylesheet is small (~11 KB gzipped): inlining it removes a render-blocking request.
+  build: { format: 'directory', inlineStylesheets: 'always' },
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
   security: {
     // Astro hashes every script and style it emits and writes a CSP <meta> tag.
