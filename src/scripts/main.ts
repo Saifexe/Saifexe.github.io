@@ -274,7 +274,11 @@ if ($('#contact-dialog')) import('./contact').then((m) => m.initContact(() => le
 counters();
 if (!reduce) {
   if (isHome) heroIntro();
-  else gsap.fromTo($$('[data-hero]'), { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1, stagger: 0.08, ease: EASE });
+  else {
+    // Case-study heroes. Pages without one (404) skip it, so GSAP doesn't warn about missing targets.
+    const intro = $$('[data-hero]');
+    if (intro.length) gsap.fromTo(intro, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1, stagger: 0.08, ease: EASE });
+  }
   reveals();
   languages();
   interactions();
