@@ -53,6 +53,15 @@ const LOGOS: Record<string, string> = {
   Vite: 'vite',
   'Tailwind CSS': 'tailwindcss',
   Netlify: 'netlify',
+  Jenkins: 'jenkins',
+  GCP: 'gcp',
+  'Spring Security': 'spring-boot',
+  Django: 'django',
+  'Next.js': 'nextjs',
+  Flutter: 'flutter',
+  MongoDB: 'mongodb',
+  FortiGate: 'fortinet',
+  pfSense: 'pfsense',
 };
 
 export function logoFor(name: string): string | null {
