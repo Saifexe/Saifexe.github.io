@@ -12,7 +12,11 @@ npm ci
 npm run dev       # http://localhost:4321 (CSP is not applied in dev)
 npm run build     # type-check + static build into dist/
 npm run preview   # serve dist/ exactly as production, with the CSP
+npm run lint      # ESLint (JS, TypeScript, Astro)
+npm run format    # Prettier (MDX is excluded: its line breaks are meaningful)
 ```
+
+CI runs the same lint and format checks, so a failing check blocks the deploy.
 
 ## Project layout
 
