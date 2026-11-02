@@ -31,7 +31,6 @@ import Note from './Note.astro';
       <div class="frame">
         <!-- 1024 px studio portrait: sharp on 2x screens at the frame's ~365 px width. -->
         <Image src={portrait} alt={`Portrait of ${site.name}`} widths={[380, 560, 760]} sizes="(max-width: 980px) 320px, 365px" quality={90} loading="eager" fetchpriority="high" />
-        <span class="corner c1" aria-hidden="true"></span><span class="corner c2" aria-hidden="true"></span>
       </div>
       <div class="tagline"><span>{site.location}</span><span><b>●</b> open to opportunities</span></div>
       <Note text="hi, that's me!" arrow="right" class="note-hero" tilt="l" />
