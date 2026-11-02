@@ -1,7 +1,7 @@
 /**
  * Live pipeline simulation for the Ktebna card. Same behaviour and timings as v1:
  * the dot stops on each stage, becomes a spinner, turns green (passed) or red (blocked),
- * then moves on. Pods wait, roll out, or show "Blocked". The 2nd run of every 3 is blocked,
+ * then moves on. Pods wait, roll out, or show "Blocked". Runs alternate clean / blocked,
  * and each blocked run fails a different gate (see FAILS), so every gate gets its turn.
  * Runs only while visible and the tab is active.
  */
@@ -25,6 +25,8 @@ const FAILS = [
   { stage: 2, msg: 'trivy · 1 CRITICAL CVE in a dependency' },
   { stage: 4, msg: 'image scan · 1 CRITICAL CVE in the base image' },
 ];
+// Global pace: every pause and movement is scaled by this (1 = original timings).
+const PACE = 0.8;
 
 export function startPipeline(root: HTMLElement, reduce: boolean) {
   const q = <T extends Element>(s: string) => root.querySelector<T>(s)!;
@@ -70,9 +72,11 @@ export function startPipeline(root: HTMLElement, reduce: boolean) {
     statusEl.className = 'live-status ' + s;
     statusEl.textContent = s;
   };
-  const sleep = (ms: number) => new Promise<void>((r) => gsap.delayedCall(ms / 1000, r));
+  const sleep = (ms: number) => new Promise<void>((r) => gsap.delayedCall((ms * PACE) / 1000, r));
   const tween = (target: object, vars: gsap.TweenVars, ms: number) =>
-    new Promise<void>((r) => gsap.to(target, { ...vars, duration: ms / 1000, ease: 'power1.inOut', onComplete: r }));
+    new Promise<void>((r) =>
+      gsap.to(target, { ...vars, duration: (ms * PACE) / 1000, ease: 'power1.inOut', onComplete: r }),
+    );
   const moveTo = (to: number, ms: number) =>
     Promise.all([tween([packet], { attr: { cx: to } }, ms), tween([trail], { attr: { x2: to } }, ms)]).then(
       () => undefined,
@@ -89,7 +93,7 @@ export function startPipeline(root: HTMLElement, reduce: boolean) {
   async function cycle() {
     run++;
     const sha = hex(),
-      gate = run % 3 === 2 ? FAILS[nBlocked++ % FAILS.length] : null;
+      gate = run % 2 === 0 ? FAILS[nBlocked++ % FAILS.length] : null;
     shaEl.textContent = sha;
     sts.forEach((n) => n.setAttribute('class', 'st'));
     setPods('idle', 'Waiting');
