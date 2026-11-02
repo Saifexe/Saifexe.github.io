@@ -1,0 +1,18 @@
+---
+import SectionTitle from './SectionTitle.astro';
+import { experience } from '../data/profile';
+---
+<section id="experience">
+  <div class="wrap">
+    <SectionTitle label="my path so far" title="Where I've *worked*" />
+    <div class="xp" data-stagger>
+      {experience.map((x) => (
+        <div class="xp-row">
+          <div class="when">{x.when}</div>
+          <div><h3>{x.title}</h3><div class="org">{x.org}</div><p class="d">{x.text}</p></div>
+          <div class="where">{x.where}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

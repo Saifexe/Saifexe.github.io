@@ -1,0 +1,53 @@
+---
+import { site } from '../data/site';
+import Note from './Note.astro';
+import ContactDialog from './ContactDialog.astro';
+const ext = { rel: 'noopener noreferrer me', target: '_blank' } as const;
+
+// Monochrome marks (they take the card's colour). Paths: GitHub Octicons, Simple Icons (LinkedIn, GitLab).
+const cards = [
+  {
+    cls: 'is-mail', k: 'Email', v: site.email, href: `mailto:${site.email}`, copy: site.email, ext: false, stroke: true,
+    box: '0 0 24 24', icon: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/>',
+  },
+  {
+    cls: 'is-in', k: 'LinkedIn', v: site.links.linkedin.label, href: site.links.linkedin.href, ext: true,
+    box: '0 0 24 24', icon: '<path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/>',
+  },
+  {
+    cls: 'is-gh', k: 'GitHub', v: site.links.github.label, href: site.links.github.href, ext: true,
+    box: '0 0 16 16', icon: '<path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>',
+  },
+  {
+    cls: 'is-gl', k: 'GitLab', v: site.links.gitlab.label, href: site.links.gitlab.href, ext: true,
+    box: '0 0 24 24', icon: '<path d="m23.6 9.593-.033-.086L20.3.98a.851.851 0 0 0-.336-.405.875.875 0 0 0-1 .054.875.875 0 0 0-.29.44L16.47 7.818H7.537L5.333 1.07a.857.857 0 0 0-.29-.441.875.875 0 0 0-1-.054.859.859 0 0 0-.336.405L.433 9.502l-.032.086a6.066 6.066 0 0 0 2.012 7.01l.01.009.03.021 4.977 3.727 2.462 1.863 1.5 1.132a1.008 1.008 0 0 0 1.22 0l1.499-1.132 2.461-1.863 5.006-3.75.013-.01a6.068 6.068 0 0 0 2.01-7.002z"/>',
+  },
+];
+---
+<section class="contact" id="contact">
+  <div class="wrap">
+    <span class="mono-label" data-rule>say hello</span>
+    <h2 data-split>Let's ship something <em class="hl">together.</em></h2>
+    <p class="sub" data-reveal>{site.availability}</p>
+    <div class="c-cta" data-reveal>
+      <a class="btn solid" href={`mailto:${site.email}`} data-open-contact data-magnetic>Write me a message <span class="arr" aria-hidden="true">→</span></a>
+      <span class="or">or reach me directly below</span>
+    </div>
+    <Note text="all the direct ways to reach me" arrow="down" inline tilt="r" />
+    <!-- Each card is one big link (the link's ::after covers the card); the Copy button sits above it. -->
+    <div class="c-grid" data-stagger>
+      {cards.map((c) => (
+        <div class={`c-card ${c.cls}`}>
+          <div class="c-top">
+            <span class="c-ico" aria-hidden="true"><svg viewBox={c.box} fill={c.stroke ? 'none' : 'currentColor'} stroke={c.stroke ? 'currentColor' : undefined} stroke-width={c.stroke ? 1.7 : undefined} stroke-linecap="round" stroke-linejoin="round" set:html={c.icon} /></span>
+            <span class="c-go" aria-hidden="true">↗</span>
+          </div>
+          <span class="k">{c.k}</span>
+          <a class="c-link" href={c.href} {...(c.ext ? ext : {})}>{c.v}</a>
+          {c.copy && <button class="c-copy" type="button" data-copy={c.copy} aria-label="Copy email address"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5" /><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15" /></svg><span data-copy-label>Copy</span></button>}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+<ContactDialog />

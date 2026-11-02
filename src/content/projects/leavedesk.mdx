@@ -1,0 +1,68 @@
+---
+title: 'LeaveDesk'
+order: 2
+kicker: ['Serverless · AWS', 'PFA 2024/25']
+summary: 'A leave management app on a fully serverless AWS architecture, with no EC2 or self-managed servers allowed. A Python Lambda behind API Gateway, four DynamoDB tables, everything defined in Terraform and deployed through GitHub Actions.'
+roles: ['My part: Terraform infra', 'Lambda backend', 'CI/CD']
+tags: ['AWS Lambda', 'API Gateway', 'DynamoDB', 'Terraform', 'GitHub Actions', 'KMS', 'Python']
+caseStudy:
+  title: 'LeaveDesk: an app with *no servers* to manage'
+  summary: 'A leave request platform built by a team of three at EPI Digital School under one strict rule: no EC2 and no self-managed infrastructure. Every component is an AWS managed service, defined in Terraform and shipped through GitHub Actions.'
+  meta:
+    - { k: 'My role', v: 'Infra, backend, CI/CD' }
+    - { k: 'Team', v: '3 students' }
+    - { k: 'Context', v: 'Academic project (PFA)' }
+    - { k: 'Constraint', v: 'No EC2, fully serverless' }
+  next: 'ktebna'
+  nextLabel: 'Ktebna, a security-gated pipeline'
+---
+import Section from '../../components/cs/Section.astro';
+import Decisions from '../../components/cs/Decisions.astro';
+import Decision from '../../components/cs/Decision.astro';
+import Compare from '../../components/cs/Compare.astro';
+import LeaveDeskArch from '../../components/cs/LeaveDeskArch.astro';
+import TagList from '../../components/TagList.astro';
+
+<Section num="01" title="The problem">
+Server-based internal tools carry hidden costs: patching, capacity planning, paying for idle machines, and environments built by hand in a console that nobody can reproduce.
+
+The question we answered: **can an enterprise app with role-based access, encryption and continuous delivery run on AWS without a single server to manage?**
+</Section>
+
+<Section num="02" title="Architecture" wide>
+<LeaveDeskArch />
+</Section>
+
+<Section num="03" title="My part">
+**Infrastructure:** wrote the Terraform for Lambda, API Gateway, the four DynamoDB tables with their indexes, KMS keys and IAM roles, so the whole environment can be rebuilt from Git.
+
+**Backend:** built the Python Lambda that handles every route (auth, leave requests and approvals, user admin, leave policies) through internal dispatch on method and path.
+
+**CI/CD:** set up GitHub Actions with separate workflows for the frontend and the infrastructure, plus branch protection and pull-request reviews so nothing reached main unchecked.
+</Section>
+
+<Section num="04" title="Key decisions">
+<Decisions>
+  <Decision title="One Lambda, internal routing" why="one deploy unit, fewer cold starts">A single stateless function routes on HTTP method and path, with all state in DynamoDB.</Decision>
+  <Decision title="Pay-per-request tables" why="no idle cost, no table scans">DynamoDB on on-demand billing, with indexes on email and employee_id.</Decision>
+  <Decision title="Sessions that expire themselves" why="no cleanup job to run">Tokens live in a Sessions table with a TTL, so DynamoDB deletes them after 30 days.</Decision>
+  <Decision title="Encryption and least privilege" why="limit the blast radius">KMS encryption at rest with key rotation; the Lambda role can only touch the tables it needs. Passwords hashed with bcrypt.</Decision>
+</Decisions>
+</Section>
+
+<Section num="05" title="Why serverless">
+<Compare
+  head={['Criterion', 'SaaS tools', 'EC2 + RDS', 'LeaveDesk']}
+  rows={[
+    ['Servers to manage', 'y:None', 'n:Yes', 'y:None'],
+    ['Infrastructure as Code', 'n:No', 'p:Partial', 'y:Terraform'],
+    ['Pay only for usage', 'p:Subscription', 'n:No', 'y:Yes'],
+    ['KMS encryption at rest', 'n:No', 'p:Partial', 'y:Yes'],
+    ['Full CI/CD pipeline', 'n:No', 'p:Manual', 'y:Yes'],
+  ]}
+/>
+</Section>
+
+<Section num="06" title="Stack">
+<TagList items={['AWS Lambda', 'API Gateway', 'DynamoDB', 'KMS', 'IAM', 'CloudWatch', 'SNS', 'Terraform', 'GitHub Actions', 'Python 3', 'React 18', 'Vite', 'Tailwind CSS', 'Netlify']} />
+</Section>

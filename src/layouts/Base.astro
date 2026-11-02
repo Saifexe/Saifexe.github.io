@@ -1,0 +1,76 @@
+---
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource-variable/dm-sans';
+import '@fontsource-variable/caveat';
+import '@fontsource-variable/geist-mono';
+import '../styles/global.css';
+import '../styles/contact-dialog.css';
+import { getImage } from 'astro:assets';
+import portrait from '../assets/img/saif.jpg';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: ImageMetadata;
+  type?: 'website' | 'article';
+}
+const { title, description = site.description, ogImage = portrait, type = 'website' } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const og = await getImage({ src: ogImage, width: 1200, format: 'jpg' });
+const ogUrl = new URL(og.src, Astro.site);
+
+// Structured data so search engines show a proper profile card.
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  jobTitle: site.role,
+  url: Astro.site?.href,
+  image: ogUrl.href,
+  address: { '@type': 'PostalAddress', addressLocality: 'Sousse', addressCountry: 'TN' },
+  sameAs: [site.links.linkedin.href, site.links.github.href, site.links.gitlab.href],
+  knowsAbout: ['DevSecOps', 'CI/CD', 'Kubernetes', 'Cloud Security', 'Terraform', 'AWS'],
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#06080e" />
+    <meta name="author" content={site.name} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    <!-- Tells the CSS that JS is on, so reveal targets can start hidden without a flash. -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <slot />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

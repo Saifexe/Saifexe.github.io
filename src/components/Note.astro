@@ -1,0 +1,20 @@
+---
+/**
+ * A handwritten side note with a sketched arrow. Decorative: hidden from screen readers
+ * because it repeats or annotates nearby content. Position it with a class from the parent.
+ */
+interface Props { text: string; arrow?: 'left' | 'right' | 'down' | 'up'; class?: string; tilt?: 'l' | 'r'; inline?: boolean }
+const { text, arrow = 'left', class: cls, tilt = 'l', inline = false } = Astro.props;
+const paths = {
+  left: 'M44 30 C 34 34, 18 30, 8 14 M8 14 L 9 25 M8 14 L 18 17',
+  right: 'M2 30 C 12 34, 28 30, 38 14 M38 14 L 37 25 M38 14 L 28 17',
+  down: 'M22 2 C 30 12, 30 26, 20 38 M20 38 L 18 28 M20 38 L 28 33',
+  up: 'M22 38 C 30 28, 30 14, 20 2 M20 2 L 18 12 M20 2 L 28 7',
+};
+const before = arrow === 'left' || arrow === 'up';
+---
+<div class:list={['note', `tilt-${tilt}`, { inline }, cls]} aria-hidden="true" data-note>
+  {before && <svg viewBox="0 0 46 40"><path d={paths[arrow]} /></svg>}
+  <span>{text}</span>
+  {!before && <svg viewBox="0 0 46 40"><path d={paths[arrow]} /></svg>}
+</div>

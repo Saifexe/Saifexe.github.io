@@ -1,0 +1,13 @@
+---
+import { facts } from '../data/site';
+---
+<div class="facts" aria-label="At a glance">
+  <div class="wrap" data-stagger>
+    {facts.map((f) => (
+      <div class="fact">
+        {f.accent ? <div class="n"><em>{f.n}</em></div> : <div class="n" data-count={f.n}>{f.n}</div>}
+        <div class="l">{f.label}</div>
+      </div>
+    ))}
+  </div>
+</div>

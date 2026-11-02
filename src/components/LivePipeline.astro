@@ -1,0 +1,54 @@
+---
+/* The Ktebna pipeline simulation. Markup only; the timeline lives in scripts/pipeline.ts. */
+const stages = [
+  { name: 'test', gate: false },
+  { name: 'sonarcloud', gate: true },
+  { name: 'security', gate: true },
+  { name: 'build', gate: false },
+  { name: 'image scan', gate: true },
+  { name: 'publish', gate: false },
+];
+const XS = [220, 330, 440, 550, 660, 770];
+const pods = ['backend', 'frontend', 'mysql'];
+---
+<div class="live-row" data-reveal>
+  <div class="live" id="live" role="img" aria-label="Animated pipeline: a commit stops at each stage while it runs, turns green when the stage passes or red when a security gate blocks it, then rolls out as pods on a Kubernetes cluster.">
+    <div class="live-bar">
+      <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>.gitlab-ci.yml · main</span>
+      <span class="live-status passed" id="live-status">passed</span>
+    </div>
+    <div class="live-scroll">
+      <svg viewBox="0 0 1080 180" aria-hidden="true">
+        <line class="track" x1="150" y1="90" x2="888" y2="90" />
+        <line class="trail" id="trail" x1="150" y1="90" x2="888" y2="90" />
+        <g class="commit"><rect x="2" y="70" width="148" height="40" rx="4" /><text x="14" y="94">git push <tspan class="sha" id="live-sha">a3f9c1e</tspan></text></g>
+        {stages.map((s, i) => (
+          <g class="st ok" id={`s${i}`} transform={`translate(${XS[i]} 90)`}>
+            {s.gate && <circle class="gring" r="22" />}
+            <circle class="halo" r="16" /><circle class="pt" r="7" />
+            <text class="ix" y="-32">{String(i + 1).padStart(2, '0')}</text>
+            <g class="lbl"><rect class="chip" rx="11" /><text class="nm" y="44">{s.name}</text></g>
+          </g>
+        ))}
+        <g class="cluster">
+          <rect class="box" x="890" y="12" width="186" height="156" rx="6" />
+          <text x="904" y="32">K8S · NS KTEBNA</text>
+          {pods.map((p, i) => (
+            <g class="pod fresh" id={`p${i}`} transform={`translate(902 ${42 + i * 40})`}>
+              <rect width="162" height="34" rx="4" /><text x="12" y="21">{p}</text>
+              <circle class="pd" cx="88" cy="17" r="3" /><text class="ps" x="96" y="21" id={`p${i}s`}>Running</text>
+            </g>
+          ))}
+        </g>
+        <g id="spin" opacity="0" transform="translate(220 90)"><circle r="13" class="spin-ring" /></g>
+        <circle class="packet" id="packet" r="6" cx="150" cy="90" opacity="0" />
+      </svg>
+    </div>
+    <div class="log" id="log" aria-hidden="true">
+      <div class="ok"><b>✓</b> publish · pushed :a3f9c1e</div>
+      <div class="ok"><b>✓</b> rollout complete · 3/3 pods Running</div>
+    </div>
+  </div>
+  <p class="live-cap">A simulation of <b>this pipeline</b>: the commit stops at each stage while it runs. <span class="gate-key" aria-hidden="true"></span> Dashed rings mark the blocking security gates.</p>
+</div>

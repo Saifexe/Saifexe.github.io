@@ -1,0 +1,68 @@
+---
+/**
+ * Contact form in a native <dialog>: focus is trapped, Esc closes it, and the page behind
+ * is inert. Behaviour lives in scripts/contact.ts. Delivery mode comes from contact.config.mjs.
+ */
+import contact from '../../contact.config.mjs';
+const topics = ['Internship / PFE', 'Job opportunity', 'A project', 'Just saying hi'];
+const mode = contact.endpoint ? 'post' : 'mailto';
+---
+<dialog class="cd" id="contact-dialog" aria-labelledby="cd-title" data-lenis-prevent data-mode={mode} data-endpoint={contact.endpoint || undefined} data-to={contact.to}>
+  <form class="cd-card" id="contact-form" novalidate>
+    <button class="cd-x" type="button" data-close aria-label="Close">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+
+    <div class="cd-head" data-cd-item>
+      <span class="mono-label">drop me a line</span>
+      <h2 id="cd-title">Let's <em class="hl">talk.</em></h2>
+      <p class="cd-sub">Tell me a bit about what you have in mind. {mode === 'mailto' ? 'Sending opens your email app with everything filled in.' : 'It goes straight to my inbox.'}</p>
+    </div>
+
+    <fieldset class="cd-topics" data-cd-item>
+      <legend>What's it about?</legend>
+      {topics.map((t, i) => (
+        <label class="pill"><input type="radio" name="topic" value={t} checked={i === 0} /><span>{t}</span></label>
+      ))}
+    </fieldset>
+
+    <div class="cd-row" data-cd-item>
+      <label class="field">
+        <span>Your name</span>
+        <input name="name" type="text" autocomplete="name" required minlength="2" maxlength="80" placeholder="Jane Doe" />
+        <small class="err" aria-live="polite"></small>
+      </label>
+      <label class="field">
+        <span>Your email</span>
+        <input name="email" type="email" autocomplete="email" required maxlength="120" placeholder="jane@company.com" />
+        <small class="err" aria-live="polite"></small>
+      </label>
+    </div>
+
+    <label class="field" data-cd-item>
+      <span>Message <i class="count" id="cd-count">0 / 1500</i></span>
+      <textarea name="message" rows="5" required minlength="10" maxlength="1500" placeholder="Hi Saif, …"></textarea>
+      <small class="err" aria-live="polite"></small>
+    </label>
+
+    <!-- Honeypot: invisible to people, tempting to bots. Filled = silently dropped. -->
+    <label class="hp" aria-hidden="true">Company website<input name="website" type="text" tabindex="-1" autocomplete="off" /></label>
+
+    <div class="cd-foot" data-cd-item>
+      <ol class="cd-steps" id="cd-steps" aria-live="polite">
+        <li data-step="check">checking fields</li>
+        <li data-step="send">{mode === 'mailto' ? 'opening your email app' : 'sending'}</li>
+        <li data-step="done">{mode === 'mailto' ? 'ready to send' : 'delivered'}</li>
+      </ol>
+      <button class="btn solid cd-send" type="submit" id="cd-send">Send message <span class="arr" aria-hidden="true">→</span></button>
+    </div>
+
+    <div class="cd-done" id="cd-done" hidden>
+      <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" /><path d="M20 33l8 8 16-17" /></svg>
+      <h3>{mode === 'mailto' ? 'Your email is ready.' : 'Message sent.'}</h3>
+      <p>{mode === 'mailto' ? 'Your email app should have opened with the message filled in. Just press send there.' : "Thanks for writing. I'll get back to you by email."}</p>
+      <p class="cd-alt">Nothing opened? Write to <a href={`mailto:${contact.to}`}>{contact.to}</a>.</p>
+      <button class="btn small" type="button" data-close>Close</button>
+    </div>
+  </form>
+</dialog>

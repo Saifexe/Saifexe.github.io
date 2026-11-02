@@ -1,0 +1,30 @@
+---
+/* Hand-drawn SVG of the LeaveDesk architecture. Boxes are sized to fit their text. */
+---
+<div class="arch" data-reveal>
+  <svg viewBox="0 0 972 336" role="img" aria-label="LeaveDesk architecture: browser to Netlify React app to API Gateway to Lambda to DynamoDB, with KMS, IAM, CloudWatch and SNS; GitHub Actions deploys with Terraform and to Netlify">
+    <defs>
+      <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#3b7bff" /></marker>
+      <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#44527a" /></marker>
+    </defs>
+    <rect class="aws" x="300" y="20" width="656" height="302" rx="8" />
+    <text x="316" y="42">AWS · managed services only · no EC2</text>
+    <g data-arch><rect class="box" x="16" y="70" width="110" height="56" rx="6" /><text class="t" x="30" y="94">Browser</text><text x="30" y="112">users</text></g>
+    <g data-arch><rect class="box" x="162" y="70" width="110" height="56" rx="6" /><text class="t" x="176" y="94">Netlify</text><text x="176" y="112">React SPA</text></g>
+    <g data-arch><rect class="box" x="320" y="70" width="130" height="56" rx="6" /><text class="t" x="334" y="94">API Gateway</text><text x="334" y="112">REST · CORS</text></g>
+    <g data-arch><rect class="box" x="486" y="70" width="140" height="56" rx="6" /><text class="t" x="500" y="94">Lambda</text><text x="500" y="112">Python 3 router</text></g>
+    <g data-arch><rect class="box" x="662" y="62" width="214" height="74" rx="6" /><text class="t" x="676" y="86">DynamoDB · 4 tables</text><text x="676" y="104">Requests · Employees</text><text x="676" y="122">Sessions (TTL) · Policies</text></g>
+    <g data-arch><rect class="box" x="486" y="172" width="140" height="56" rx="6" /><text class="t" x="500" y="196">CloudWatch</text><text x="500" y="214">logs · alarms</text></g>
+    <g data-arch><rect class="box" x="662" y="172" width="100" height="56" rx="6" /><text class="t" x="676" y="196">SNS</text><text x="676" y="214">alerts</text></g>
+    <g data-arch><rect class="box" x="780" y="166" width="164" height="74" rx="6" /><text class="t" x="794" y="190">KMS · IAM</text><text x="794" y="208">encryption at rest</text><text x="794" y="226">least privilege</text></g>
+    <g data-arch><rect class="box" x="320" y="256" width="200" height="56" rx="6" /><text class="t" x="334" y="280">Terraform</text><text x="334" y="298">all resources as code</text></g>
+    <g data-arch><rect class="box" x="16" y="256" width="180" height="56" rx="6" /><text class="t" x="30" y="280">GitHub Actions</text><text x="30" y="298">PR checks · deploy</text></g>
+    <g data-arch-lines>
+      <path class="ln" marker-end="url(#ah)" d="M126 98H160" /><path class="ln" marker-end="url(#ah)" d="M272 98H318" /><path class="ln" marker-end="url(#ah)" d="M450 98H484" /><path class="ln" marker-end="url(#ah)" d="M626 98H660" />
+      <path class="flow" d="M126 98H160M272 98H318M450 98H484M626 98H660" />
+      <path class="ln2" marker-end="url(#ah2)" d="M556 126V170" /><path class="ln2" marker-end="url(#ah2)" d="M626 200H660" /><path class="ln2" marker-end="url(#ah2)" d="M840 166V138" />
+      <path class="ln2" marker-end="url(#ah2)" d="M196 284H318" /><path class="ln2" marker-end="url(#ah2)" d="M180 256V128" /><path class="ln2" marker-end="url(#ah2)" d="M385 256V128" />
+    </g>
+  </svg>
+</div>
+<p class="figcap">Request path in blue. Dashed lines: monitoring, encryption and delivery.</p>

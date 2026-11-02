@@ -1,0 +1,26 @@
+---
+import SectionTitle from './SectionTitle.astro';
+import { about } from '../data/site';
+---
+<section id="about">
+  <div class="wrap">
+    <SectionTitle label="a bit about me" title="Get to *know me*" />
+    <div class="about">
+      <div class="portrait" data-reveal>
+        <div class="frame">
+          <video src="/media/debugging.mp4" poster="/media/debugging-poster.jpg" width="480" height="480" autoplay loop muted playsinline preload="none" data-autoplay aria-label="A baboon typing furiously on a laptop"></video>
+          <span class="corner c1" aria-hidden="true"></span><span class="corner c2" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="story" data-reveal>
+        <p class="about-intro">{about.intro}</p>
+        {about.story.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+    <div class="principles" data-stagger>
+      {about.principles.map((p, i) => (
+        <div class="principle"><span class="ix">{String(i + 1).padStart(2, '0')}</span><h3>{p.title}</h3><p>{p.text}</p></div>
+      ))}
+    </div>
+  </div>
+</section>

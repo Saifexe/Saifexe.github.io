@@ -1,0 +1,21 @@
+---
+import { site } from '../data/site';
+---
+<nav class="top" aria-label="Sections">
+  <div class="wrap">
+    <a class="brand" href="/#top" data-travel><span class="dot" aria-hidden="true"></span><span>Saif<b>.</b></span></a>
+    <ul class="navlinks">
+      {site.nav.map((l) => <li><a href={l.href} data-travel data-nav={l.id}>{l.label}</a></li>)}
+    </ul>
+    <div class="nav-right">
+      <a class="btn small solid" href="/#contact" data-travel data-magnetic>Contact</a>
+      <button class="burger" type="button" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <ul>
+    {site.nav.map((l) => <li><a href={l.href} data-travel>{l.label}</a></li>)}
+    <li><a href="/#contact" data-travel>Contact</a></li>
+  </ul>
+</div>

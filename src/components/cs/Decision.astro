@@ -1,0 +1,5 @@
+---
+interface Props { title: string; why: string }
+const { title, why } = Astro.props;
+---
+<div class="decision"><h3>{title}</h3><p><slot /></p><span class="why">why: {why}</span></div>

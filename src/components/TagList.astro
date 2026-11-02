@@ -1,0 +1,15 @@
+---
+import { logoFor } from '../data/tech';
+interface Props { items: readonly string[]; class?: string }
+const { items, class: cls } = Astro.props;
+---
+<div class:list={['tags', cls]}>
+  {items.map((name) => {
+    const logo = logoFor(name);
+    return logo ? (
+      <span class="tag ti"><img src={logo} alt="" width="16" height="16" loading="lazy" decoding="async" />{name}</span>
+    ) : (
+      <span class="tag">{name}</span>
+    );
+  })}
+</div>

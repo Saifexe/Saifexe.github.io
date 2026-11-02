@@ -1,0 +1,91 @@
+---
+import { getCollection } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import SectionTitle from './SectionTitle.astro';
+import LivePipeline from './LivePipeline.astro';
+import TagList from './TagList.astro';
+import { hl, plain } from '../lib/hl';
+import Note from './Note.astro';
+
+const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const featured = all.find((p) => p.data.featured);
+const others = all.filter((p) => !p.data.featured);
+const hasCase = (p: (typeof all)[number]) => Boolean(p.data.caseStudy);
+
+// Full-size, optimized versions for the lightbox.
+const gallery = featured?.data.highlights
+  ? await Promise.all(
+      featured.data.highlights.gallery.map(async (g) => ({
+        ...g,
+        full: (await getImage({ src: g.src, width: Math.min(2400, g.src.width), format: 'webp', quality: 92 })).src,
+      })),
+    )
+  : [];
+---
+<section id="work">
+  <div class="wrap">
+    <SectionTitle label="things I'm proud of" title="Things I've *built*" />
+
+    {featured && featured.data.highlights && (
+      <article class="case" data-reveal>
+        <div class="case-head">
+          <div>
+            <div class="kicker">{featured.data.kicker.map((k) => <span>{k}</span>)}</div>
+            <h3 class:list={['big', `vt-${featured.id}`]} set:html={hl(featured.data.title)} />
+            <p class="lead">{featured.data.summary}</p>
+            {hasCase(featured) && (
+              <div class="cta-row"><a class="btn solid" href={`/work/${featured.id}/`} data-magnetic>Read the case study <span class="arr" aria-hidden="true">→</span></a></div>
+            )}
+          </div>
+          <div class="numbers" aria-label="Key results">
+            {featured.data.highlights.numbers.map((n) => (
+              <div><div class="n" data-count={n.n} data-dec={n.dec} data-suf={n.suf}>{n.n.toFixed(n.dec)}{n.suf}</div><div class="l">{n.label}</div></div>
+            ))}
+          </div>
+        </div>
+
+        <div class="note-pipe-wrap"><Note text="keep watching: on the 2nd run of every 3, a security gate stops the release" arrow="down" inline /></div>
+        <LivePipeline />
+
+        <div class="case-body">
+          <div><h4 class="h4">What I built</h4><ul class="list">{featured.data.highlights.built.map((b) => <li>{b}</li>)}</ul></div>
+          <div><h4 class="h4">How it runs</h4><ul class="list">{featured.data.highlights.runs.map((b) => <li>{b}</li>)}</ul></div>
+        </div>
+
+        <div class="gallery-wrap">
+        <Note text="my favourite one: the gate doing its job" arrow="down" class="note-gallery" tilt="l" />
+        <div class="gallery" aria-label="Project screenshots" data-stagger>
+          {gallery.map((g) => (
+            <button class="shot" type="button" data-full={g.full} data-cap={g.cap} data-dark={g.dark ? '1' : undefined}>
+              <div class="im"><Image src={g.src} alt={g.alt} widths={[480, 800, 1100]} quality={90} sizes="(max-width: 520px) 92vw, (max-width: 900px) 45vw, 340px" /></div>
+              <span><b>{g.name}</b> · {g.short}</span>
+            </button>
+          ))}
+        </div>
+        </div>
+      </article>
+    )}
+
+    <div class="more">
+      {others.map((p) =>
+        p.data.status === 'planned' ? (
+          <article class="card next" data-reveal>
+            <span class="scan" aria-hidden="true"></span>
+            <div class="kicker">{p.data.kicker.map((k) => <span>{k}</span>)}</div>
+            <h3 set:html={hl(p.data.title)} />
+            <p>{p.data.summary}</p>
+          </article>
+        ) : (
+          <article class="card" data-reveal data-tilt>
+            <div class="kicker">{p.data.kicker.map((k) => <span>{k}</span>)}</div>
+            <h3 class={hasCase(p) ? `vt-${p.id}` : undefined}>{plain(p.data.title)}</h3>
+            <p>{p.data.summary}</p>
+            {p.data.roles.length > 0 && <div class="role">{p.data.roles.map((r) => <span>{r}</span>)}</div>}
+            <TagList items={p.data.tags} />
+            {hasCase(p) && <a class="btn small read" href={`/work/${p.id}/`}>Read the case study <span class="arr" aria-hidden="true">→</span></a>}
+          </article>
+        ),
+      )}
+    </div>
+  </div>
+</section>

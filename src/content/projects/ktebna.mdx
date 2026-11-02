@@ -1,0 +1,120 @@
+---
+title: 'Ktebna: a security-gated delivery platform'
+order: 1
+featured: true
+kicker: ['DevSecOps', 'Arabsoft internship', '2026']
+summary: 'Ktebna is a peer-to-peer book marketplace for Tunisia (Spring Boot, React, MySQL). I proposed the project, rebuilt its backend, and built everything around it: a 6-stage GitLab pipeline where any failed security check blocks the release, a Kubernetes deployment, and monitoring with alerting.'
+tags: ['GitLab CI/CD', 'Docker', 'Kubernetes', 'SonarCloud', 'Trivy', 'Gitleaks', 'Prometheus', 'Grafana', 'Alertmanager', 'Spring Boot', 'React', 'MySQL', 'Flyway', 'nginx']
+caseStudy:
+  title: 'Ktebna: from a side app to a *gated* release pipeline'
+  summary: 'Arabsoft gave me supervision and freedom, not a set task. I proposed Ktebna, a book marketplace web app, and turned it into a production-style system: a new backend, containers, a pipeline where security checks can stop a release, a Kubernetes deployment, and monitoring that pages someone when things go wrong.'
+  meta:
+    - { k: 'Role', v: 'Sole engineer' }
+    - { k: 'Duration', v: 'Jul – Sep 2026' }
+    - { k: 'Setting', v: 'Remote internship, Arabsoft' }
+    - { k: 'Status', v: 'Complete, pipeline green' }
+  next: 'leavedesk'
+  nextLabel: 'LeaveDesk, serverless on AWS'
+highlights:
+  numbers:
+    - { n: 12, label: 'pipeline jobs in 6 stages' }
+    - { n: 83.9, dec: 1, suf: '%', label: 'test coverage, quality gate passed' }
+    - { n: 297, label: 'automated tests per run' }
+    - { n: 8, label: 'Prometheus alert rules with email' }
+  built:
+    - 'Migrated the backend from Supabase to Spring Boot + MySQL with JWT auth and Flyway-versioned schema.'
+    - 'Shift-left security: SonarCloud quality gate (80%+ coverage on new code), Gitleaks over the full git history, Trivy on dependencies and images.'
+    - 'Supply chain: only the exact scanned image is published to the registry, tagged by commit SHA for traceable rollbacks.'
+    - 'Tests with JUnit 5, Testcontainers on a real MySQL, JaCoCo, Vitest and ESLint, including authorization and rate-limit rules.'
+  runs:
+    - 'Kubernetes with multi-stage, non-root images, health probes, resource limits, PVCs and Secrets.'
+    - 'Prometheus, Grafana and Alertmanager: golden-signals dashboard and 8 alert rules with email notifications.'
+    - 'Automated MySQL backups, S3-compatible object storage, nginx caching and compression.'
+    - 'README, SECURITY.md, a security gate policy and rollback runbooks.'
+  gallery:
+    - { src: '../../assets/img/grafana.png', alt: 'Grafana dashboard for the Ktebna backend', name: 'Grafana', short: '0.0% errors, 8.26 ms p99', cap: 'Grafana golden-signals dashboard: 0.0% error rate, 8.26 ms p99 latency' }
+    - { src: '../../assets/img/sonar.png', alt: 'SonarCloud project overview', name: 'SonarCloud', short: 'gate passed, 83.9% coverage', cap: 'SonarCloud: quality gate passed, 83.9% coverage, 0.9% duplication, A security rating' }
+    - { src: '../../assets/img/gate-blocked.png', alt: 'GitLab pipeline blocked at the SonarCloud stage', name: 'Gate test', short: 'a bad commit gets blocked', cap: 'Proof the gate works: a deliberately added code issue fails sonarcloud-check and stops the pipeline' }
+    - { src: '../../assets/img/k8s-structure.png', alt: 'Kubernetes structure diagram', name: 'Kubernetes', short: 'namespace design', cap: 'Kubernetes structure: services, deployments, pods, secrets and persistent volumes in the ktebna namespace', dark: false }
+    - { src: '../../assets/img/kubectl.png', alt: 'kubectl get all output', name: 'Cluster', short: 'all workloads running', cap: 'kubectl get all: backend, frontend and MySQL running in the ktebna namespace' }
+    - { src: '../../assets/img/alerts.png', alt: 'Prometheus alert rules', name: 'Alerting', short: '8 Prometheus rules', cap: 'Prometheus alert rules: BackendDown, HighErrorRate, HighP99Latency, DB pool and disk alerts' }
+---
+import Section from '../../components/cs/Section.astro';
+import Figure from '../../components/cs/Figure.astro';
+import Decisions from '../../components/cs/Decisions.astro';
+import Decision from '../../components/cs/Decision.astro';
+import Bug from '../../components/cs/Bug.astro';
+import Results from '../../components/cs/Results.astro';
+import TagList from '../../components/TagList.astro';
+import architecture from '../../assets/img/architecture.png';
+import pipeline from '../../assets/img/pipeline-diagram.png';
+import defense from '../../assets/img/defense.png';
+import k8s from '../../assets/img/k8s-structure.png';
+import roadmap from '../../assets/img/roadmap.png';
+
+<Section num="01" title="The challenge">
+The original app ran on Supabase with no tests, no containers and no delivery process. Any change went live by hand, and nothing checked it for bugs, leaked secrets or vulnerable dependencies.
+
+My goal: **every commit on main should become a tested, scanned, traceable release, or be stopped with a clear reason.** And I had to do it on free tiers, with 400 CI minutes a month.
+</Section>
+
+<Section num="02" title="Architecture">
+I rebuilt the backend in Spring Boot with MySQL, JWT authentication and Flyway migrations, kept the React frontend behind nginx, and added a monitoring stack next to the app.
+
+<Figure src={architecture} alt="Ktebna runtime architecture diagram" cap="Runtime architecture: nginx serving React, Spring Boot API, MySQL, and the Prometheus, Grafana and Alertmanager stack" note="Runtime architecture. Ports bind to 127.0.0.1 only; Prometheus scrapes every 15 s and Alertmanager emails the operator." />
+</Section>
+
+<Section num="03" title="The pipeline">
+Six stages, twelve jobs. Images are built as artifacts but **not pushed** until their own Trivy scan passes, so what reaches the registry is exactly what was scanned.
+
+<Figure src={pipeline} alt="Pipeline stage diagram" cap="The 6-stage GitLab pipeline with nightly rescans of published images" note="Each stage only runs once every blocking job before it has passed." />
+</Section>
+
+<Section num="04" title="Key decisions">
+<Decisions>
+  <Decision title="Scan the artifact, then publish it" why="no gap between what's tested and what ships">Build images, save them as job artifacts, scan them, and push only the scanned image tagged with the commit SHA.</Decision>
+  <Decision title="Only main publishes" why="a side branch can't skip the gate">The blocking SonarCloud gate runs on main, so only main can replace the `:latest` image.</Decision>
+  <Decision title="Nightly rescans" why="clean yesterday isn't clean today">A schedule rescans published images every night, because new CVEs appear even when the code doesn't change.</Decision>
+  <Decision title="Gitleaks on full history" why="a deleted secret is still in git">Secrets are scanned in the working tree and across every past commit, not just the latest diff.</Decision>
+  <Decision title="Spend CI minutes wisely" why="400 free minutes a month">Docs-only commits start no pipeline, and older pipelines are cancelled when a newer commit arrives.</Decision>
+  <Decision title="Real database in tests" why="catch the bugs production would hit">Backend tests run against MySQL 8 through Testcontainers on Docker-in-Docker, not an in-memory fake.</Decision>
+</Decisions>
+</Section>
+
+<Section num="05" title="Defense in depth">
+Security isn't one tool. Each layer limits what a failure in another layer can expose.
+
+<Figure src={defense} alt="Defense in depth layers" cap="Six security layers, from pipeline gates to secrets management" />
+</Section>
+
+<Section num="06" title="Kubernetes">
+The stack runs in its own namespace with one Deployment and Service per component, PVCs for the database and uploads, and Secrets for credentials. Every pod runs without a service-account token, with CPU and memory limits, and images tagged by commit.
+
+<Figure src={k8s} alt="Kubernetes structure" cap="Kubernetes structure of the ktebna namespace" />
+</Section>
+
+<Section num="07" title="Problems I solved">
+<Bug symptom="SonarCloud returned 403 in CI even with a valid token." label="Root cause">main was not a protected branch, so GitLab withheld protected variables like `SONAR_TOKEN`. I proved it by checking `CI_COMMIT_REF_PROTECTED` and comparing variable lengths without printing secrets.</Bug>
+<Bug symptom="Pods stuck in ImagePullBackOff with 401 Unauthorized.">Images live in a private GitLab registry. I created a read-only deploy token, a docker-registry Secret and `imagePullSecrets`, then cleaned up duplicate ReplicaSets left by the failed rollout.</Bug>
+<Bug symptom="Docker-in-Docker builds couldn't reach the daemon.">Configured the DinD service without TLS inside the isolated job and pointed `DOCKER_HOST` at it; passed registry credentials to Trivy explicitly.</Bug>
+<Bug symptom="Trivy dependency scans failed on Maven registry rate limits.">Ran the filesystem scan with `--offline-scan` and overrode scanner image entrypoints so they run as CI jobs.</Bug>
+<Bug kind="Incident" symptom="A root .env file was staged for the first push, and tokens were later exposed while debugging." label="Response">Removed the file before it reached the remote, rotated the exposed tokens, and recorded the incident and rotation history in SECURITY.md.</Bug>
+</Section>
+
+<Section num="08" title="Results">
+<Results items={[
+  { n: '12', l: 'jobs in 6 blocking stages' },
+  { n: '297', l: 'tests per run (121 backend, 176 frontend)' },
+  { n: '83.9%', l: 'coverage, quality gate passed' },
+  { n: 'A', l: 'SonarCloud security rating, 0 open issues' },
+  { n: '8', l: 'alert rules, emailed on fire and resolve' },
+  { n: '8.26', unit: 'ms', l: 'p99 latency on the Grafana dashboard' },
+]} />
+</Section>
+
+<Section num="09" title="How I worked">
+Seven sprints, each ending with a working increment the next one builds on.
+
+<Figure src={roadmap} alt="Sprint roadmap" cap="Sprint roadmap: analysis and migration through gates, alerting and polish" />
+<TagList items={frontmatter.tags} />
+</Section>

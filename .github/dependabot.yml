@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: weekly }
+    groups:
+      astro: { patterns: ['astro', '@astrojs/*'] }
+      animation: { patterns: ['gsap', 'lenis', 'three', '@types/three'] }
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://saifexe.github.io/sitemap-index.xml
