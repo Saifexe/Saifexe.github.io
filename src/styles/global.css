@@ -2651,15 +2651,31 @@ body::after {
 .gallery-wrap {
   position: relative;
 }
-/* In the flow, centred above the screenshots: it pushes them down instead of covering one. */
+/* In the flow above the screenshots (it pushes them down instead of covering one). The row copies the
+   gallery's 3-column grid so the note is centred over the 3rd shot, "Gate test". */
+.note-gallery-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding: 30px 40px 0;
+  margin-bottom: -16px;
+}
 .note.note-gallery {
   position: relative;
   inset: auto;
-  width: fit-content;
-  margin: 30px auto -16px;
+  grid-column: 3;
+  justify-self: center;
+  margin: 0;
 }
-@media (max-width: 980px) {
+/* Below 900px the gallery has 2 columns or 1, and "Gate test" is no longer in the top row, so the note
+   goes back to being centred above the whole gallery. */
+@media (max-width: 900px) {
+  .note-gallery-row {
+    display: block;
+    padding: 24px 22px 0;
+  }
   .note.note-gallery {
-    margin: 24px auto -16px;
+    width: fit-content;
+    margin: 0 auto;
   }
 }

@@ -92,7 +92,10 @@ const gallery = featured?.data.highlights
         </div>
 
         <div class="gallery-wrap">
-          <Note text="my favourite one: the gate doing its job" arrow="down" class="note-gallery" tilt="r" />
+          <!-- Same grid as the gallery, so the note sits over the 3rd shot ("Gate test"). -->
+          <div class="note-gallery-row">
+            <Note text="my favourite one: the gate doing its job" arrow="down" class="note-gallery" tilt="r" />
+          </div>
           <div class="gallery" aria-label="Project screenshots" data-stagger>
             {gallery.map((g) => (
               <button
