@@ -14,6 +14,8 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   integrations: [mdx(), sitemap()],
+  // No code blocks in the content, and Shiki's inline styles would break the CSP.
+  markdown: { syntaxHighlight: false },
   build: { format: 'directory' },
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
   security: {
