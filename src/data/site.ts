@@ -39,7 +39,7 @@ export const site = {
 } as const;
 
 export const facts = [
-  { n: 3, label: 'internships, from IoT to DevSecOps' },
+  { n: 5, label: 'internships, from IoT to DevSecOps' },
   { n: 6, label: 'certifications incl. CEH, CCNA, AZ-900' },
   { n: 4, label: 'languages: Arabic, English, French, German' },
   { n: 2027, label: 'engineering degree, Cloud Computing & DevOps', accent: true },
