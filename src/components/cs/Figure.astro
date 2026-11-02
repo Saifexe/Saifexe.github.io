@@ -5,6 +5,6 @@ const { src, alt, cap, note, dark = false } = Astro.props;
 const full = await getImage({ src, width: Math.min(2880, src.width), format: 'webp', quality: 92 });
 ---
 <button class="fig" type="button" data-full={full.src} data-cap={cap} data-dark={dark ? '1' : undefined}>
-  <Image src={src} alt={alt} widths={[820, 1280, Math.min(1680, src.width), Math.min(2460, src.width)]} quality={90} sizes="(max-width: 860px) 92vw, 820px" />
+  <Image src={src} alt={alt} widths={[680, 820, 1280, Math.min(1680, src.width), Math.min(2460, src.width)]} quality={90} sizes="(max-width: 860px) 92vw, 820px" />
 </button>
 {note && <p class="figcap">{note}</p>}
