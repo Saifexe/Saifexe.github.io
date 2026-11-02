@@ -4,7 +4,6 @@
  * is inert. Behaviour lives in scripts/contact.ts. Delivery mode comes from contact.config.mjs.
  */
 import contact from '../../contact.config.mjs';
-const topics = ['Internship / PFE', 'Job opportunity', 'A project', 'Just saying hi'];
 const mode = contact.endpoint ? 'post' : 'mailto';
 ---
 
@@ -37,15 +36,18 @@ const mode = contact.endpoint ? 'post' : 'mailto';
       </p>
     </div>
 
-    <fieldset class="cd-topics" data-cd-item>
-      <legend>What's it about?</legend>
-      {topics.map((t, i) => (
-        <label class="pill">
-          <input type="radio" name="topic" value={t} checked={i === 0} />
-          <span>{t}</span>
-        </label>
-      ))}
-    </fieldset>
+    <label class="field" data-cd-item>
+      <span>What's it about?</span>
+      <input
+        name="topic"
+        type="text"
+        required
+        minlength="2"
+        maxlength="80"
+        placeholder="Internship, job offer, a project…"
+      />
+      <small class="err" aria-live="polite"></small>
+    </label>
 
     <div class="cd-row" data-cd-item>
       <label class="field">
@@ -111,7 +113,8 @@ const mode = contact.endpoint ? 'post' : 'mailto';
           : "Thanks for writing. I'll get back to you by email."}
       </p>
       <p class="cd-alt">
-        Nothing opened? Write to <a href={`mailto:${contact.to}`}>{contact.to}</a>.
+        {mode === 'mailto' ? 'Nothing opened?' : 'Prefer email?'} Write to{' '}
+        <a href={`mailto:${contact.to}`}>{contact.to}</a>.
       </p>
       <button class="btn small" type="button" data-close>
         Close

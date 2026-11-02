@@ -104,9 +104,11 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
     if (small) small.textContent = msg;
   };
   function validate() {
-    const name = field('name'),
+    const topic = field('topic'),
+      name = field('name'),
       email = field('email');
     const checks: [HTMLInputElement | HTMLTextAreaElement, string][] = [
+      [topic, topic.value.trim().length < 2 ? 'What is it about? A few words is enough.' : ''],
       [name, name.value.trim().length < 2 ? 'Please tell me your name.' : ''],
       [email, !EMAIL.test(email.value.trim()) ? 'That email doesn’t look right.' : ''],
       [message, message.value.trim().length < 10 ? 'A few more words, please (10+ characters).' : ''],
@@ -120,7 +122,7 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
     }
     return !first;
   }
-  ['name', 'email', 'message'].forEach((n) =>
+  ['topic', 'name', 'email', 'message'].forEach((n) =>
     field(n).addEventListener('input', (e) => {
       const el = e.target as HTMLInputElement;
       if (el.closest('.field')?.classList.contains('bad')) setErr(el, '');
@@ -155,9 +157,18 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
         credentials: 'omit',
         referrerPolicy: 'no-referrer',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ ...data, _subject: `[Portfolio] ${data.topic}`, _replyto: data.email }),
+        body: JSON.stringify({
+          ...data,
+          _subject: `[Portfolio] ${data.topic}: ${data.name}`,
+          _replyto: data.email,
+          _template: 'table',
+          _captcha: 'false',
+        }),
       });
       if (!res.ok) throw new Error(String(res.status));
+      // Some services answer 200 with { success: false } (e.g. a form that is not activated yet).
+      const json = (await res.json().catch(() => ({}))) as { success?: boolean | string };
+      if (json.success === false || json.success === 'false') throw new Error('rejected');
       return;
     }
     const subject = `[Portfolio] ${data.topic}: ${data.name}`;
@@ -200,7 +211,7 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
     try {
       await wait(500);
       await deliver({
-        topic: clean('topic', 40),
+        topic: clean('topic', 80),
         name: clean('name', 80),
         email: clean('email', 120),
         message: clean('message', 1500),

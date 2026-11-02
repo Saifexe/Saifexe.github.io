@@ -9,6 +9,8 @@
  *   astro.config.mjs adds exactly this origin to the CSP connect-src; nothing else is allowed.
  */
 export default {
-  endpoint: '',
+  // FormSubmit: no account or key. The first submission sends an activation email to `to`;
+  // click its link once and every later message lands in the inbox.
+  endpoint: 'https://formsubmit.co/ajax/saif.eddine.dahech10@gmail.com',
   to: 'saif.eddine.dahech10@gmail.com',
 };
