@@ -7,6 +7,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import Lenis from 'lenis';
+import { getLang, initI18n, setLang, storedLang, type Lang } from './i18n';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -20,6 +21,16 @@ const isHome = !!$('#top.hero');
 const EASE = 'expo.out';
 
 root.classList.add('motion-ready');
+
+/* ---------------- Language ----------------
+   Runs before any heading is split or animated, so the French text is what gets split.
+   Split headings keep their English markup here: a split replaces their text nodes,
+   and switching back to English needs the originals. */
+const splitEn = new Map<HTMLElement, string>();
+document.querySelectorAll<HTMLElement>('[data-split]').forEach((el) => splitEn.set(el, el.innerHTML));
+initI18n();
+if (storedLang() === 'fr') setLang('fr');
+root.classList.remove('i18n-pending');
 
 /* ---------------- Start position ----------------
    Home always opens at the top (shared links with #section stay clean),
@@ -197,20 +208,27 @@ function reveals() {
   // Split headings: lines rise out of a mask. Splitting measures layout, so headings further down
   // are split shortly before they scroll in, not all at load. The animation itself is unchanged.
   const split = (el: HTMLElement) => {
-    SplitText.create(el, {
+    let rise: gsap.core.Tween | undefined;
+    const vars: SplitText.Vars = {
       type: 'lines,words',
       mask: 'lines',
       linesClass: 'split-line',
       autoSplit: true,
-      onSplit: (self) =>
-        gsap.from(self.lines, {
+      onSplit: (self) => {
+        // A language switch re-splits: drop the old lines' tween before making the new one.
+        rise?.scrollTrigger?.kill();
+        rise?.kill();
+        rise = gsap.from(self.lines, {
           yPercent: 105,
           duration: 1.1,
           stagger: 0.08,
           ease: EASE,
           scrollTrigger: { trigger: el, start: 'top 88%', once: true },
-        }),
-    });
+        });
+        return rise;
+      },
+    };
+    splits.push({ el, s: SplitText.create(el, vars), vars });
     el.style.opacity = '1';
   };
   $$('[data-split]').forEach((el) => {
@@ -386,6 +404,129 @@ function interactions() {
     });
   });
 }
+
+/* ---------------- Language switch ----------------
+   The thumb slides at once; a loader covers the page (a circle growing out of the switch),
+   the text is swapped while it's covered, then the loader wipes away. About 1.8 s in all. */
+const splits: { el: HTMLElement; s: SplitText; vars: SplitText.Vars }[] = [];
+const switches = $$<HTMLButtonElement>('[data-lang-switch]');
+const LOADER_COPY = {
+  fr: { route: 'en → fr', from: 'Hello.', to: 'Bonjour.', msg: 'traduction en cours', live: 'Page en français' },
+  en: { route: 'fr → en', from: 'Bonjour.', to: 'Hello.', msg: 'translating the page', live: 'Page in English' },
+};
+const paintSwitches = (lang: Lang) =>
+  switches.forEach((b) => {
+    b.classList.toggle('is-fr', lang === 'fr');
+    b.setAttribute('aria-label', lang === 'fr' ? 'Passer en anglais' : 'Switch to French');
+  });
+paintSwitches(getLang());
+
+// What sits just under the bar, so the reader keeps their place when line lengths change.
+function readingAnchor() {
+  if (scrollY < 40) return null;
+  const barH = $('nav.top, .cs-bar')?.offsetHeight ?? 0;
+  const hit = document.elementFromPoint(innerWidth / 2, barH + 24);
+  const el = hit?.closest<HTMLElement>('[data-split]') ?? (hit as HTMLElement | null);
+  return el ? { el, top: el.getBoundingClientRect().top } : null;
+}
+
+function swapLanguage(to: Lang, anchor: ReturnType<typeof readingAnchor>) {
+  // Split headings go back to their English markup first, then get translated and split again.
+  const live = splits.filter((x) => x.s.isSplit);
+  live.forEach((x) => {
+    x.s.revert();
+    x.el.innerHTML = splitEn.get(x.el) ?? x.el.innerHTML;
+  });
+  setLang(to);
+  live.forEach((x) => x.s.split(x.vars));
+  ScrollTrigger.refresh();
+  if (anchor?.el.isConnected) {
+    const y = scrollY + anchor.el.getBoundingClientRect().top - anchor.top;
+    if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+    else scrollTo(0, y);
+  }
+  const liveRegion = $('#lang-live');
+  if (liveRegion) liveRegion.textContent = LOADER_COPY[to].live;
+}
+
+let switching = false;
+function switchLanguage(btn: HTMLElement) {
+  if (switching) return;
+  switching = true;
+  const to: Lang = getLang() === 'fr' ? 'en' : 'fr';
+  const anchor = readingAnchor();
+  paintSwitches(to);
+  setMenu(false);
+  const done = () => {
+    lenis?.start();
+    switching = false;
+  };
+  const loader = $('#lang-loader');
+  if (reduce || !loader) {
+    swapLanguage(to, anchor);
+    return done();
+  }
+
+  const copy = LOADER_COPY[to];
+  const box = $('.ll-box', loader)!,
+    from = $('[data-ll-from]', loader)!,
+    dest = $('[data-ll-to]', loader)!,
+    fill = $('[data-ll-fill]', loader)!,
+    pct = $('[data-ll-pct]', loader)!;
+  $('[data-ll-route]', loader)!.textContent = copy.route;
+  $('[data-ll-msg]', loader)!.textContent = copy.msg;
+  from.textContent = copy.from;
+  dest.textContent = copy.to;
+  pct.textContent = '0%';
+  gsap.set(dest, { yPercent: 115 }); // waits below the mask until the swap
+
+  const r = btn.getBoundingClientRect();
+  const cx = r.left + r.width / 2,
+    cy = r.top + r.height / 2;
+  const radius = Math.hypot(Math.max(cx, innerWidth - cx), Math.max(cy, innerHeight - cy)) + 4;
+  const count = { v: 0 };
+
+  lenis?.stop();
+  loader.classList.add('on');
+  gsap
+    .timeline({
+      defaults: { ease: 'expo.inOut' },
+      onComplete: () => {
+        loader.classList.remove('on');
+        gsap.set([loader, box, from, dest, fill], { clearProps: 'all' });
+        done();
+      },
+    })
+    // Cover: a circle grows out of the switch.
+    .fromTo(
+      loader,
+      { clipPath: `circle(0px at ${cx}px ${cy}px)` },
+      { clipPath: `circle(${radius}px at ${cx}px ${cy}px)`, duration: 0.6 },
+    )
+    .fromTo(box, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, 0.25)
+    .fromTo(fill, { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: 'power2.inOut' }, 0.3)
+    .to(
+      count,
+      {
+        v: 100,
+        duration: 0.9,
+        ease: 'power2.inOut',
+        onUpdate: () => {
+          pct.textContent = `${Math.round(count.v)}%`;
+        },
+      },
+      0.3,
+    )
+    // Fully covered: swap the text while the greeting turns into the other language.
+    .call(() => swapLanguage(to, anchor), [], 0.62)
+    .fromTo(from, { yPercent: 0 }, { yPercent: -115, duration: 0.55 }, 0.62)
+    .fromTo(dest, { yPercent: 115 }, { yPercent: 0, duration: 0.55 }, 0.62)
+    // Reveal: the loader wipes upward off the translated page.
+    .to(box, { opacity: 0, y: -14, duration: 0.3, ease: 'power2.in' }, 1.25)
+    .set(loader, { clipPath: 'inset(0% 0% 0% 0%)' }, 1.3)
+    .to(loader, { clipPath: 'inset(0% 0% 100% 0%)', duration: 0.55 }, 1.3);
+}
+switches.forEach((b) => b.addEventListener('click', () => switchLanguage(b)));
 
 /* ---------------- Lightbox ---------------- */
 const dlg = $<HTMLDialogElement>('#lightbox');

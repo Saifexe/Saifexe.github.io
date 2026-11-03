@@ -1,5 +1,6 @@
 ---
 import { site } from '../data/site';
+import LangSwitch from './LangSwitch.astro';
 ---
 
 <nav class="top" aria-label="Sections">
@@ -20,6 +21,7 @@ import { site } from '../data/site';
       ))}
     </ul>
     <div class="nav-right">
+      <LangSwitch />
       <a class="btn small solid" href="/#contact" data-travel data-magnetic>
         Contact
       </a>

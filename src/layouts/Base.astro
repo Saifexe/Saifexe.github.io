@@ -64,9 +64,18 @@ const person = {
     <meta name="twitter:image" content={ogUrl} />
 
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
-    <!-- Tells the CSS that JS is on, so reveal targets can start hidden without a flash. -->
+    <!-- Tells the CSS that JS is on, so reveal targets can start hidden without a flash.
+         A visitor who chose French gets the page hidden until main.ts has translated it. -->
     <script is:inline>
       document.documentElement.classList.add('js');
+      try {
+        if (localStorage.getItem('lang') === 'fr') {
+          document.documentElement.lang = 'fr';
+          document.documentElement.classList.add('i18n-pending');
+        }
+      } catch {
+        /* storage blocked: stay in English */
+      }
     </script>
   </head>
   <body>
@@ -75,6 +84,30 @@ const person = {
     </a>
     <div class="progress" id="progress" aria-hidden="true"></div>
     <slot />
+    <div class="lang-loader" id="lang-loader" aria-hidden="true" data-i18n-skip>
+      <div class="ll-box">
+        <span class="ll-tag">
+          <i></i>
+          <span data-ll-route>en → fr</span>
+        </span>
+        <div class="ll-words">
+          <span class="ll-w" data-ll-from>
+            Hello.
+          </span>
+          <span class="ll-w" data-ll-to>
+            Bonjour.
+          </span>
+        </div>
+        <div class="ll-bar">
+          <i data-ll-fill></i>
+        </div>
+        <div class="ll-foot">
+          <span data-ll-msg>traduction en cours</span>
+          <span data-ll-pct>0%</span>
+        </div>
+      </div>
+    </div>
+    <p class="sr-only" id="lang-live" aria-live="polite" data-i18n-skip></p>
     <script>
       import '../scripts/main';
     </script>

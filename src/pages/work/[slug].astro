@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Footer from '../../components/Footer.astro';
 import { hl, plain } from '../../lib/hl';
+import LangSwitch from '../../components/LangSwitch.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects', (p) => Boolean(p.data.caseStudy));
@@ -21,9 +22,12 @@ const ogImage = project.data.highlights?.gallery[0]?.src;
       <a class="crumb" href="/#work">
         work / <b>{project.id}</b>
       </a>
-      <a class="btn small" href="/#work">
-        ← Back
-      </a>
+      <div class="cs-bar-right">
+        <LangSwitch />
+        <a class="btn small" href="/#work">
+          ← Back
+        </a>
+      </div>
     </div>
   </div>
   <main id="main">
