@@ -4,8 +4,8 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import contact from './contact.config.mjs';
 
-// If a form endpoint is configured, allow exactly that origin and nothing else.
-const formOrigin = contact.endpoint ? new URL(contact.endpoint).origin : '';
+// Allow exactly the configured form services' origins and nothing else.
+const formOrigins = [...new Set(contact.endpoints.map((u) => new URL(u).origin))].join(' ');
 
 // GitHub Pages user site: https://saifexe.github.io (repo "Saifexe.github.io").
 // For a project site (https://saifexe.github.io/portfolio) set base: '/portfolio'.
@@ -30,7 +30,7 @@ export default defineConfig({
         "img-src 'self' data:",
         "font-src 'self'",
         "media-src 'self'",
-        `connect-src 'self'${formOrigin ? ' ' + formOrigin : ''}`,
+        `connect-src 'self'${formOrigins ? ' ' + formOrigins : ''}`,
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'none'",

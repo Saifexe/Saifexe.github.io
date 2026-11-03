@@ -4,7 +4,7 @@
  * is inert. Behaviour lives in scripts/contact.ts. Delivery mode comes from contact.config.mjs.
  */
 import contact from '../../contact.config.mjs';
-const mode = contact.endpoint ? 'post' : 'mailto';
+const mode = contact.endpoints.length ? 'post' : 'mailto';
 ---
 
 <dialog
@@ -13,7 +13,7 @@ const mode = contact.endpoint ? 'post' : 'mailto';
   aria-labelledby="cd-title"
   data-lenis-prevent
   data-mode={mode}
-  data-endpoint={contact.endpoint || undefined}
+  data-endpoints={contact.endpoints.join(' ') || undefined}
   data-to={contact.to}
 >
   <form class="cd-card" id="contact-form" novalidate>

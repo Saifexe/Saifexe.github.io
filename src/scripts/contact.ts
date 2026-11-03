@@ -21,12 +21,14 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
   const count = dlg.querySelector<HTMLElement>('#cd-count')!;
   const message = form.elements.namedItem('message') as HTMLTextAreaElement;
   const mode = dlg.dataset.mode as 'mailto' | 'post';
-  const endpoint = dlg.dataset.endpoint || '';
+  const endpoints = (dlg.dataset.endpoints || '').split(' ').filter(Boolean);
+  // Services that failed during this visit are skipped on later sends.
+  const down = new Set<string>();
   const to = dlg.dataset.to || '';
   let origin = { x: 0, y: 0 };
   let lastSent = 0;
   let closing = false;
-  // Set when the form service fails: the next Send opens the visitor's email app instead.
+  // Set when every form service fails: the next Send opens the visitor's email app instead.
   let fallback = false;
 
   /* ---------- Open / close ---------- */
@@ -153,34 +155,50 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
     fallback = false;
   }
 
+  /** One JSON POST to a form service; throws on a network error, a timeout or a rejection. */
+  async function post(url: string, payload: Record<string, string>, timeout: number) {
+    const formSubmit = new URL(url).hostname === 'formsubmit.co';
+    const res = await fetch(url, {
+      method: 'POST',
+      // A service that is down can hang for 20 s or more; give up early and try the next one.
+      signal: AbortSignal.timeout(timeout),
+      credentials: 'omit',
+      // FormSubmit rejects requests with no Referer; send the origin only, never the path.
+      referrerPolicy: 'strict-origin',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      // FormSubmit-only options; Formspree would print them as extra fields.
+      body: JSON.stringify(formSubmit ? { ...payload, _template: 'table', _captcha: 'false' } : payload),
+    });
+    if (!res.ok) throw new Error(String(res.status));
+    // Some services answer 200 with { success: false } (e.g. a form that is not activated yet).
+    const json = (await res.json().catch(() => ({}))) as { success?: boolean | string };
+    if (json.success === false || json.success === 'false') throw new Error('rejected');
+  }
+
   async function deliver(data: { topic: string; name: string; email: string; message: string }) {
     const subject = `New message from ${data.name} — ${data.topic}`;
     if (mode === 'post' && !fallback) {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        // A service that is down can hang for 20 s or more; give up early and offer the fallback.
-        signal: AbortSignal.timeout(10_000),
-        credentials: 'omit',
-        // Some services reject requests with no Referer; send the origin only, never the path.
-        referrerPolicy: 'strict-origin',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      const payload = {
         // The keys are the labels in the notification email, shown in this order.
-        body: JSON.stringify({
-          Message: data.message,
-          From: data.name,
-          'Reply to': data.email,
-          Topic: data.topic,
-          Language: document.documentElement.lang === 'fr' ? 'French' : 'English',
-          Page: location.pathname,
-          _subject: subject,
-          _replyto: data.email,
-        }),
-      });
-      if (!res.ok) throw new Error(String(res.status));
-      // Some services answer 200 with { success: false } (e.g. a form that is not activated yet).
-      const json = (await res.json().catch(() => ({}))) as { success?: boolean | string };
-      if (json.success === false || json.success === 'false') throw new Error('rejected');
-      return;
+        Message: data.message,
+        From: data.name,
+        'Reply to': data.email,
+        Topic: data.topic,
+        Language: document.documentElement.lang === 'fr' ? 'French' : 'English',
+        Page: location.pathname,
+        _subject: subject,
+        _replyto: data.email,
+      };
+      const live = endpoints.filter((u) => !down.has(u));
+      for (const [i, url] of live.entries()) {
+        try {
+          await post(url, payload, i < live.length - 1 ? 8_000 : 10_000);
+          return;
+        } catch {
+          down.add(url); // try the next service; skip this one for the rest of the visit
+        }
+      }
+      throw new Error('all services failed');
     }
     const body = `${data.message}\n\n${data.name}\n${data.email}`;
     location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

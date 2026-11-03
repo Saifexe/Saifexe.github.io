@@ -1,15 +1,18 @@
 /**
  * Contact form delivery.
  *
- * endpoint: '' (default) → "Send" opens the visitor's email app with the message prefilled (mailto).
- *   No third party, nothing to configure, works on GitHub Pages as is.
- *
- * endpoint: 'https://formspree.io/f/xxxxxxx' → the form posts directly from the page (JSON, no cookies).
- *   Create a free form at formspree.io (or any service accepting a JSON POST), paste its URL here.
- *   astro.config.mjs adds exactly this origin to the CSP connect-src; nothing else is allowed.
+ * endpoints: services tried in order. When one fails or times out, the next one is tried; when all
+ *   fail, the next "Send" opens the visitor's email app with the message prefilled (mailto).
+ *   An empty list means mailto only: no third party, nothing to configure.
+ *   astro.config.mjs adds exactly these origins to the CSP connect-src; nothing else is allowed.
+ *   The URLs are public by design: they ship in the page.
  */
 export default {
-  // Formspree form "Portfolio", delivering to `to`. The URL is public by design (it ships in the page).
-  endpoint: 'https://formspree.io/f/xbggqrww',
+  endpoints: [
+    // FormSubmit (primary): its "table" email layout is the nicest. Already activated for `to`.
+    'https://formsubmit.co/ajax/saif.eddine.dahech10@gmail.com',
+    // Formspree form "Portfolio" (backup).
+    'https://formspree.io/f/xbggqrww',
+  ],
   to: 'saif.eddine.dahech10@gmail.com',
 };
