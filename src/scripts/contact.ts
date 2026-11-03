@@ -23,6 +23,7 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
   const mode = dlg.dataset.mode as 'mailto' | 'post';
   const endpoint = dlg.dataset.endpoint || '';
   const to = dlg.dataset.to || '';
+  const formSubmit = /(^|\.)formsubmit\.co$/.test(endpoint ? new URL(endpoint).hostname : '');
   let origin = { x: 0, y: 0 };
   let lastSent = 0;
   let closing = false;
@@ -160,15 +161,15 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
         // A service that is down can hang for 20 s or more; give up early and offer the fallback.
         signal: AbortSignal.timeout(10_000),
         credentials: 'omit',
-        // FormSubmit rejects requests with no Referer; send the origin only, never the path.
+        // Some services reject requests with no Referer; send the origin only, never the path.
         referrerPolicy: 'strict-origin',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           ...data,
           _subject: `[Portfolio] ${data.topic}: ${data.name}`,
           _replyto: data.email,
-          _template: 'table',
-          _captcha: 'false',
+          // FormSubmit-only options; other services would print them as extra fields.
+          ...(formSubmit && { _template: 'table', _captcha: 'false' }),
         }),
       });
       if (!res.ok) throw new Error(String(res.status));
