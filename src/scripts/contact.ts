@@ -23,7 +23,6 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
   const mode = dlg.dataset.mode as 'mailto' | 'post';
   const endpoint = dlg.dataset.endpoint || '';
   const to = dlg.dataset.to || '';
-  const formSubmit = /(^|\.)formsubmit\.co$/.test(endpoint ? new URL(endpoint).hostname : '');
   let origin = { x: 0, y: 0 };
   let lastSent = 0;
   let closing = false;
@@ -155,6 +154,7 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
   }
 
   async function deliver(data: { topic: string; name: string; email: string; message: string }) {
+    const subject = `New message from ${data.name} — ${data.topic}`;
     if (mode === 'post' && !fallback) {
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -164,12 +164,16 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
         // Some services reject requests with no Referer; send the origin only, never the path.
         referrerPolicy: 'strict-origin',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        // The keys are the labels in the notification email, shown in this order.
         body: JSON.stringify({
-          ...data,
-          _subject: `[Portfolio] ${data.topic}: ${data.name}`,
+          Message: data.message,
+          From: data.name,
+          'Reply to': data.email,
+          Topic: data.topic,
+          Language: document.documentElement.lang === 'fr' ? 'French' : 'English',
+          Page: location.pathname,
+          _subject: subject,
           _replyto: data.email,
-          // FormSubmit-only options; other services would print them as extra fields.
-          ...(formSubmit && { _template: 'table', _captcha: 'false' }),
         }),
       });
       if (!res.ok) throw new Error(String(res.status));
@@ -178,7 +182,6 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
       if (json.success === false || json.success === 'false') throw new Error('rejected');
       return;
     }
-    const subject = `[Portfolio] ${data.topic}: ${data.name}`;
     const body = `${data.message}\n\n${data.name}\n${data.email}`;
     location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
