@@ -282,6 +282,8 @@ export const fr: Record<string, string> = {
   'That email doesn’t look right.': 'Cette adresse e-mail ne semble pas valide.',
   'A few more words, please (10+ characters).': 'Votre message est un peu court (10 caractères minimum).',
   'Just sent one, give it 30 seconds.': 'Message déjà envoyé, merci de patienter 30 secondes.',
+  'The form service is down. Press Send message again to open your email app with your message ready.':
+    'Le service d’envoi est indisponible. Appuyez de nouveau sur « Envoyer le message » pour ouvrir votre messagerie avec votre message déjà rédigé.',
 
   /* ---------- Live pipeline (status chip and log lines; stage and pod labels stay as tool output) ---------- */
   passed: 'réussi',
@@ -517,5 +519,4 @@ export const frPatterns: [RegExp, string][] = [
   [/^push (\w+) to main$/, 'push $1 sur main'],
   [/^publish · pushed :(\w+)$/, 'publish · image poussée :$1'],
   [/^loading(\.{0,3})$/, 'chargement$1'],
-  [/^Couldn't send right now\. Please email me at (\S+)\.$/, 'Envoi impossible pour le moment. Écrivez-moi à $1.'],
 ];

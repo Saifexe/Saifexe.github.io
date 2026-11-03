@@ -26,6 +26,8 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
   let origin = { x: 0, y: 0 };
   let lastSent = 0;
   let closing = false;
+  // Set when the form service fails: the next Send opens the visitor's email app instead.
+  let fallback = false;
 
   /* ---------- Open / close ---------- */
   function open(from?: Element | null) {
@@ -148,12 +150,15 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
     done.hidden = true;
     form!.classList.remove('sent');
     send.disabled = false;
+    fallback = false;
   }
 
   async function deliver(data: { topic: string; name: string; email: string; message: string }) {
-    if (mode === 'post') {
+    if (mode === 'post' && !fallback) {
       const res = await fetch(endpoint, {
         method: 'POST',
+        // A service that is down can hang for 20 s or more; give up early and offer the fallback.
+        signal: AbortSignal.timeout(10_000),
         credentials: 'omit',
         // FormSubmit rejects requests with no Referer; send the origin only, never the path.
         referrerPolicy: 'strict-origin',
@@ -224,7 +229,11 @@ export function initContact(getLenis: () => Lenisish, reduce: boolean) {
       showDone();
     } catch {
       setStep('send', 'bad');
-      setErr(message, `Couldn't send right now. Please email me at ${to}.`);
+      fallback = true;
+      setErr(
+        message,
+        'The form service is down. Press Send message again to open your email app with your message ready.',
+      );
       send.disabled = false;
     }
   });
