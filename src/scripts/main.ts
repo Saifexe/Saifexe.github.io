@@ -35,7 +35,11 @@ root.classList.remove('i18n-pending');
 /* ---------------- Start position ----------------
    Home always opens at the top (shared links with #section stay clean),
    unless the visitor came back from a case study, in which case it returns to Work. */
+// A refresh always starts at the top. ScrollTrigger keeps its own copy of this setting (read when
+// it registers, so "auto") and re-applies it with the remembered position on every refresh(),
+// which silently undid the line above; clearScrollMemory hands it "manual" and drops that memory.
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+ScrollTrigger.clearScrollMemory('manual');
 let returnTo: string | null = null;
 try {
   returnTo = sessionStorage.getItem('returnTo');
