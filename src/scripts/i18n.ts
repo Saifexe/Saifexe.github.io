@@ -4,7 +4,7 @@
  * Each swap remembers its English original, which is how switching back restores it.
  * A MutationObserver translates text that scripts write later (pipeline log, form errors, labels).
  */
-import { fr as frDict, frPatterns } from '../i18n/fr';
+import { fr as frDict, frPatterns, frScoped } from '../i18n/fr';
 
 export type Lang = 'en' | 'fr';
 
@@ -31,12 +31,14 @@ export function storedLang(): Lang {
   }
 }
 
-/** French for one string, keeping its outer whitespace; null when there is nothing to change. */
-function toFr(raw: string): string | null {
+/** French for one string, keeping its outer whitespace; null when there is nothing to change.
+ *  `at` is the element the text sits in, for words whose French depends on where they appear. */
+function toFr(raw: string, at?: Element | null): string | null {
   const m = /^(\s*)([\s\S]*?)(\s*)$/.exec(raw)!;
   const core = m[2].replace(/\s+/g, ' ');
   if (!core) return null;
-  let out = DICT.get(core);
+  let out = at ? frScoped.find((x) => x.en === core && at.closest(x.scope))?.fr : undefined;
+  if (out === undefined) out = DICT.get(core);
   if (out === undefined) {
     for (const [re, rep] of frPatterns)
       if (re.test(core)) {
@@ -55,7 +57,7 @@ function applyText(n: Text) {
     return;
   }
   if (mem && n.data === mem.fr) return;
-  const out = toFr(n.data);
+  const out = toFr(n.data, n.parentElement);
   if (out === null) return;
   textMem.set(n, { en: n.data, fr: out });
   n.data = out;
@@ -71,7 +73,7 @@ function applyAttr(el: Element, name: string) {
     return;
   }
   if (pair && val === pair.fr) return;
-  const out = toFr(val);
+  const out = toFr(val, el);
   if (out === null) return;
   if (!mem) attrMem.set(el, (mem = new Map()));
   mem.set(name, { en: val, fr: out });
