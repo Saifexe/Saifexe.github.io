@@ -14,6 +14,8 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   integrations: [mdx(), sitemap()],
+  // Hide Astro's dev toolbar on localhost (it never ships to the live site).
+  devToolbar: { enabled: false },
   // No code blocks in the content, and Shiki's inline styles would break the CSP.
   markdown: { syntaxHighlight: false },
   build: { format: 'directory' },
