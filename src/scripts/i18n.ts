@@ -5,10 +5,10 @@
  * A MutationObserver translates text that scripts write later (pipeline log, form errors, labels).
  */
 import { fr as frDict, frPatterns, frScoped } from '../i18n/fr';
+import { LANG_KEY } from '../i18n/storage';
 
 export type Lang = 'en' | 'fr';
 
-const KEY = 'lang';
 const DICT = new Map(Object.entries(frDict));
 const ATTRS = ['aria-label', 'title', 'alt', 'placeholder', 'data-cap', 'data-level'];
 // Never touch code or anything that manages its own wording.
@@ -27,7 +27,7 @@ export const getLang = (): Lang => current;
 
 export function storedLang(): Lang {
   try {
-    return localStorage.getItem(KEY) === 'fr' ? 'fr' : 'en';
+    return localStorage.getItem(LANG_KEY) === 'fr' ? 'fr' : 'en';
   } catch {
     return 'en';
   }
@@ -111,7 +111,7 @@ export function setLang(lang: Lang) {
   walk(document.body);
   document.title = lang === 'fr' ? (toFr(titleEn) ?? titleEn) : titleEn;
   try {
-    localStorage.setItem(KEY, lang);
+    localStorage.setItem(LANG_KEY, lang);
   } catch {
     /* storage blocked: the choice lasts for this page only */
   }

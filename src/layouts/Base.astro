@@ -9,6 +9,7 @@ import '../styles/contact-dialog.css';
 import { getImage } from 'astro:assets';
 import portrait from '../assets/img/saif.jpg';
 import { site } from '../data/site';
+import { LANG_KEY } from '../i18n/storage';
 
 interface Props {
   title?: string;
@@ -30,7 +31,7 @@ const person = {
   jobTitle: site.role,
   url: Astro.site?.href,
   image: ogUrl.href,
-  address: { '@type': 'PostalAddress', addressLocality: 'Sousse', addressCountry: 'TN' },
+  address: { '@type': 'PostalAddress', addressLocality: site.location.split(',')[0], addressCountry: 'TN' },
   sameAs: [site.links.linkedin.href, site.links.github.href, site.links.gitlab.href],
   knowsAbout: ['DevSecOps', 'CI/CD', 'Kubernetes', 'Cloud Security', 'Terraform', 'AWS'],
 };
@@ -66,10 +67,10 @@ const person = {
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
     <!-- Tells the CSS that JS is on, so reveal targets can start hidden without a flash.
          A visitor who chose French gets the page hidden until main.ts has translated it. -->
-    <script is:inline>
+    <script is:inline define:vars={{ LANG_KEY }}>
       document.documentElement.classList.add('js');
       try {
-        if (localStorage.getItem('lang') === 'fr') {
+        if (localStorage.getItem(LANG_KEY) === 'fr') {
           document.documentElement.lang = 'fr';
           document.documentElement.classList.add('i18n-pending');
         }

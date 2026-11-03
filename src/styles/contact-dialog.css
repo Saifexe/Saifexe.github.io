@@ -170,7 +170,7 @@ dialog.cd.closing::backdrop {
 }
 .field input::placeholder,
 .field textarea::placeholder {
-  color: #5d6880;
+  color: var(--dim);
 }
 .field input:focus,
 .field textarea:focus {
@@ -216,7 +216,7 @@ dialog.cd.closing::backdrop {
   gap: 6px 14px;
   font-family: var(--mono);
   font-size: 12px;
-  color: #5d6880;
+  color: var(--dim);
 }
 .cd-steps li {
   display: inline-flex;

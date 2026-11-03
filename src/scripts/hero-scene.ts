@@ -49,11 +49,14 @@ const ADD = {
   blendSrcAlpha: ZeroFactor,
   blendDstAlpha: OneFactor,
 } as const;
-const BLUE = new Color('#3b7bff'),
-  BLUE_HI = new Color('#7aa6ff'),
-  GREEN = new Color('#3fcf8e'),
-  RED = new Color('#ff5d6c'),
-  WHITE = new Color('#e9f0ff');
+// Palette comes from the CSS custom properties in global.css, so the scene follows any colour change.
+const css = getComputedStyle(document.documentElement);
+const token = (name: string) => new Color(css.getPropertyValue(name).trim());
+const BLUE = token('--accent'),
+  BLUE_HI = token('--accent-hi'),
+  GREEN = token('--ok'),
+  RED = token('--bad'),
+  WHITE = new Color('#e9f0ff'); // a cooler white than --ink, only used for the glow
 const FOV = 40,
   CAM_Z = 12;
 

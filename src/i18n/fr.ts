@@ -337,7 +337,6 @@ export const fr: Record<string, string> = {
     'que chaque commit sur main devienne une version testée, analysée et traçable, ou soit bloqué pour une raison explicite.',
   'And I had to do it on free tiers, with 400 CI minutes a month.':
     'Le tout avec des offres gratuites et 400 minutes de CI par mois.',
-  Architecture: 'Architecture',
   'I rebuilt the backend in Spring Boot with MySQL, JWT authentication and Flyway migrations, kept the React frontend behind nginx, and added a monitoring stack next to the app.':
     'J’ai refait le backend en Spring Boot avec MySQL, une authentification JWT et des migrations Flyway, conservé le frontend React derrière nginx, et ajouté une stack de supervision à côté de l’application.',
   'Runtime architecture: nginx serving React, Spring Boot API, MySQL, and the Prometheus, Grafana and Alertmanager stack': `Architecture d’exécution${nb}: nginx qui sert React, l’API Spring Boot, MySQL et la stack Prometheus, Grafana et Alertmanager`,
@@ -415,7 +414,6 @@ export const fr: Record<string, string> = {
   'Ran the filesystem scan with': 'J’ai lancé l’analyse du système de fichiers avec',
   'and overrode scanner image entrypoints so they run as CI jobs.':
     'et redéfini l’entrypoint des images des scanners pour qu’elles puissent tourner comme jobs CI.',
-  Incident: 'Incident',
   'A root .env file was staged for the first push, and tokens were later exposed while debugging.':
     'Un fichier .env à la racine avait été ajouté au premier push, et des jetons ont ensuite été exposés pendant une séance de débogage.',
   Response: 'Réaction',
@@ -440,7 +438,6 @@ export const fr: Record<string, string> = {
   'to manage': 'à gérer',
   'A leave request platform built by a team of three at EPI Digital School under one strict rule: no EC2 and no self-managed infrastructure. Every component is an AWS managed service, defined in Terraform and shipped through GitHub Actions.': `Une plateforme de demandes de congé réalisée à trois à l’EPI Digital School, avec une règle stricte${nb}: ni EC2, ni infrastructure à administrer soi-même. Chaque composant est un service managé d’AWS, décrit en Terraform et déployé avec GitHub Actions.`,
   'My role': 'Mon rôle',
-  'Infra, backend, CI/CD': 'Infra, backend, CI/CD',
   Team: 'Équipe',
   '3 students': '3 étudiants',
   Context: 'Contexte',

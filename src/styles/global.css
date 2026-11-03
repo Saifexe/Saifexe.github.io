@@ -9,6 +9,7 @@
   --ink: #eef2fb;
   --soft: #c9d1e3;
   --muted: #8b95ab;
+  --dim: #5d6880; /* quieter than --muted: counters, secondary SVG labels */
   --line: #1c2438;
   --line-hi: #2a3756;
   --accent: #3b7bff;
@@ -1021,7 +1022,7 @@ ul.list li::before {
   font-size: 13.5px;
   padding: 4px 12px;
   border: 1px solid var(--line);
-  color: #c9d1e3;
+  color: var(--soft);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.015);
   white-space: nowrap;
@@ -1397,7 +1398,7 @@ ul.list li::before {
 .live .pod text {
   font-family: var(--label);
   font-size: 13px;
-  fill: #c9d1e3;
+  fill: var(--soft);
 }
 .live .pod .ps,
 .live .pod .pd {
@@ -1420,7 +1421,7 @@ ul.list li::before {
 }
 .live .pod.idle .ps,
 .live .pod.idle .pd {
-  fill: #5d6880;
+  fill: var(--dim);
 }
 .live .pod.idle text:first-of-type {
   fill: #7f8aa3;

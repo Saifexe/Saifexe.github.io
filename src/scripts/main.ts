@@ -139,7 +139,8 @@ document.addEventListener('click', (e) => {
 // Active link follows the section in view.
 if (isHome) {
   const links = $$<HTMLAnchorElement>('.navlinks a[data-nav]');
-  ['about', 'work', 'experience', 'toolbox', 'education', 'now', 'contact'].forEach((id) => {
+  // The nav's own sections, plus Contact (no link of its own: reaching it clears the highlight).
+  [...links.map((l) => l.dataset.nav!), 'contact'].forEach((id) => {
     const sec = document.getElementById(id);
     if (!sec) return;
     ScrollTrigger.create({
