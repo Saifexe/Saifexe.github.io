@@ -563,6 +563,10 @@ nav.top .wrap {
   color: var(--soft);
 }
 .hero .cta {
+  /* Own layer above the photo: the reveal animation leaves a transform on both, which makes
+     each a stacking context, so without this the open CV menu would slide under the portrait. */
+  position: relative;
+  z-index: 3;
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
@@ -2762,6 +2766,20 @@ body::after {
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+}
+@media (max-width: 420px) {
+  /* Small phones: Back shrinks to its arrow so the breadcrumb keeps its room (the label stays for screen readers). */
+  .cs-bar .back {
+    padding-inline: 13px;
+  }
+  .cs-bar .back-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }
 @media (max-width: 420px) {
   /* Small phones: the menu already has Contact, so the bar keeps the switch and the burger. */

@@ -310,7 +310,7 @@ export const fr: Record<string, string> = {
 
   /* ---------- Case studies: shared ---------- */
   'work /': 'projets /',
-  '← Back': '← Retour',
+  Back: 'Retour',
   'Case study': 'Étude de cas',
   'Next case study →': 'Étude de cas suivante →',
   'Key decisions': 'Choix clés',

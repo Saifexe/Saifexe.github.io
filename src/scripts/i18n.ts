@@ -11,8 +11,10 @@ export type Lang = 'en' | 'fr';
 const KEY = 'lang';
 const DICT = new Map(Object.entries(frDict));
 const ATTRS = ['aria-label', 'title', 'alt', 'placeholder', 'data-cap', 'data-level'];
-// Never touch code, user input or anything that manages its own wording.
-const SKIP = 'script, style, noscript, textarea, code, pre, [data-i18n-skip]';
+// Never touch code or anything that manages its own wording.
+const SKIP = 'script, style, noscript, code, pre, [data-i18n-skip]';
+// A textarea's text is what the visitor types: leave it, but still translate its placeholder.
+const isTyped = (n: Node) => n.parentElement?.tagName === 'TEXTAREA';
 
 type Pair = { en: string; fr: string };
 const textMem = new WeakMap<Text, Pair>();
@@ -87,7 +89,7 @@ function applyElement(el: Element) {
 /** Translate (or restore) everything under root. */
 function walk(root: Node) {
   if (root.nodeType === Node.TEXT_NODE) {
-    if (!root.parentElement?.closest(SKIP)) applyText(root as Text);
+    if (!root.parentElement?.closest(SKIP) && !isTyped(root)) applyText(root as Text);
     return;
   }
   if (!(root instanceof Element) || root.closest(SKIP)) return;
@@ -96,8 +98,9 @@ function walk(root: Node) {
     acceptNode: (n) => (n instanceof Element && n.matches(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
   });
   for (let n = tw.nextNode(); n; n = tw.nextNode()) {
-    if (n.nodeType === Node.TEXT_NODE) applyText(n as Text);
-    else applyElement(n as Element);
+    if (n.nodeType === Node.TEXT_NODE) {
+      if (!isTyped(n)) applyText(n as Text);
+    } else applyElement(n as Element);
   }
 }
 
